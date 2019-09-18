@@ -3,6 +3,14 @@
   "version": "1.0.0",
   "author": "adikalon",
   "license": "ISC",
+  "scripts": {
+    "clear": "node clear.js",
+    "build": "node clear.js && tsc && vue-cli-service build",
+    "tsc": "tsc",
+    "start": "electron app.js",
+    "watch": "NODE_ENV=DEV vue-cli-service serve & sleep 5 && NODE_ENV=DEV electron app.js",
+    "rebuild-sqlite": "electron-rebuild -f -w better-sqlite3"
+  },
   "dependencies": {
     "better-sqlite3": "5.4.3",
     "electron": "6.0.8",
