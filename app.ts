@@ -1,4 +1,7 @@
 import { app, BrowserWindow } from 'electron'
+import Settings from './common/Settings'
+
+const config: any[] = Settings.getAllSettings()
 
 let url: string
 
@@ -26,4 +29,8 @@ app.on('ready', () => {
   window.loadURL(url)
 
   window.on('closed', () => window = null)
+
+  window.webContents.on('did-finish-load', () => {
+    window.webContents.send('config', config)
+  })
 })

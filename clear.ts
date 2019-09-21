@@ -1,6 +1,5 @@
 import rimraf = require('rimraf')
 import fs = require('fs')
-import path = require('path')
 
 rimraf.sync('dist')
 
