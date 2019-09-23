@@ -14,43 +14,41 @@ export default class Settings {
     return this.db
   }
 
-  public static getAllSettings (): any[] {
+  public static getAllSettings (): object[][] {
+    let newSettings: object[][] = []
+
     const sql: string = 'SELECT * FROM `settings`'
 
-    return this.connect().prepare(sql).all()
-  }
-}
+    const oldSettings: any[] = this.connect().prepare(sql).all()
 
-
-
-
-
-/*
-import path = require('path')
-const sqlite: any = require('sqlite3').verbose()
-const database: string = path.resolve(__dirname, '../../../databases/settings.db')
-
-export default class Settings {
-  private static instance: any = null
-
-  private static connect (): any {
-    if (this.instance === null) {
-      this.instance = new sqlite.Database(database)
+    for (const setting of oldSettings) {
+      if (newSettings.length <= 0) {
+        newSettings.push([setting])
+      } else {
+        if (newSettings[newSettings.length - 1].length <= 1) {
+          newSettings[newSettings.length - 1].push(setting)
+        } else {
+          newSettings.push([setting])
+        }
+      }
     }
 
-    return this.instance
+    return newSettings
   }
 
-  public static getAllSettings (callback: Function): void {
-    const sql: string = 'SELECT * FROM `settings`'
+  public static updateAllSettings (fields: object): boolean {
+    let updated: boolean = true
 
-    this.connect().all(sql, function (err: any, rows: Array<Object>) {
-      if (err) {
-        throw err
+    for (const [name, value] of Object.entries(fields)) {
+      const sql: string = 'UPDATE `settings` SET `value` = ? WHERE `name` = ?'
+      const stmt: sqlite.Statement<any[]> = this.connect().prepare(sql)
+      const update: sqlite.RunResult = stmt.run(value, name)
+
+      if (update.changes !== 1) {
+        updated = false
       }
+    }
 
-      callback(rows)
-    });
+    return updated
   }
 }
-*/

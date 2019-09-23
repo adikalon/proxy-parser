@@ -1,7 +1,7 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import Settings from './common/Settings'
 
-const config: any[] = Settings.getAllSettings()
+const config: object[][] = Settings.getAllSettings()
 
 let url: string
 
@@ -31,6 +31,10 @@ app.on('ready', () => {
   window.on('closed', () => window = null)
 
   window.webContents.on('did-finish-load', () => {
-    window.webContents.send('config', config)
+    window.webContents.send('config-data', config)
+  })
+
+  ipcMain.on('config-save', (event: any, fields: any) => {
+    event.returnValue = Settings.updateAllSettings(fields)
   })
 })

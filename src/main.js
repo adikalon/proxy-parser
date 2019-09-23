@@ -17,7 +17,7 @@ const data = {
   settings: []
 }
 
-getData('config', function (value) {
+getData('config-data', function (value) {
   data.settings = value
 })
 
