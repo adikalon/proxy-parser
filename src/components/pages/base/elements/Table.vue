@@ -22,245 +22,13 @@
         </tr>
       </tfoot>
       <tbody>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>80</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
-        </tr>
-        <tr>
-          <td>RU</td>
-          <td>127.0.0.1</td>
-          <td>81</td>
-          <td>ParserName</td>
-          <td>03.09.2019 - 19:12:34</td>
-          <td>04.09.2019 - 23:32:41</td>
+        <tr v-for="proxy in proxies" :key="proxy.id">
+          <td>{{ proxy.country }}</td>
+          <td>{{ proxy.ip }}</td>
+          <td>{{ proxy.port }}</td>
+          <td>{{ proxy.source }}</td>
+          <td>{{ dateFormat(proxy.inserted) }}</td>
+          <td>{{ dateFormat(proxy.updated) }}</td>
         </tr>
       </tbody>
     </table>
@@ -269,7 +37,25 @@
 
 <script>
   export default {
+    data() {
+      return {
+        proxies: this.$root.proxies
+      }
+    },
+    methods: {
+      dateFormat(timestamp) {
+        const date  = new Date(timestamp)
+        const day   = ('0' + date.getDate()).slice(-2)
+        const month = ('0' + (date.getMonth() + 1)).slice(-2)
+        const year  = date.getFullYear()
+        const hour  = ('0' + date.getHours()).slice(-2)
+        const min   = ('0' + date.getMinutes()).slice(-2)
+        const sec   = ('0' + date.getSeconds()).slice(-2)
+        const total = `${day}.${month}.${year} - ${hour}:${min}:${sec}`
 
+        return total
+      }
+    }
   }
 </script>
 

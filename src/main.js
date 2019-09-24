@@ -14,11 +14,16 @@ function getData (event, fn) {
 }
 
 const data = {
-  settings: []
+  settings: [],
+  proxies: []
 }
 
 getData('config-data', function (value) {
   data.settings = value
+})
+
+getData('proxies-data', function (value) {
+  data.proxies = value
 })
 
 Vue.use(VueRouter)

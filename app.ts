@@ -1,7 +1,9 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import Settings from './common/Settings'
+import Proxies from './common/Proxies'
 
 const config: object[][] = Settings.getAllSettings()
+const proxies: any[] = Proxies.getAllProxy()
 
 let url: string
 
@@ -32,6 +34,7 @@ app.on('ready', () => {
 
   window.webContents.on('did-finish-load', () => {
     window.webContents.send('config-data', config)
+    window.webContents.send('proxies-data', proxies)
   })
 
   ipcMain.on('config-save', (event: any, fields: any) => {
