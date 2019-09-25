@@ -21,38 +21,66 @@
         <p>Спецсимволы</p>
       </div>
       <div class="message-body">
-        <b>%i</b> - IP
+        <table class="characters-description">
+          <tr>
+            <td><b>%c</b> - страна</td>
+            <td><b>%i</b> - IP</td>
+          </tr>
+          <tr>
+            <td><b>%p</b> - порт</td>
+            <td><b>%s</b> - источник</td>
+          </tr>
+        </table>
       </div>
     </article>
     <div class="field has-addons">
       <p class="control has-icons-left is-expanded">
-        <input @focus="showHints" @blur="hideHints" class="input" type="text" placeholder="Шаблон">
+        <input
+          ref="pattern"
+          @focus="showHints"
+          @blur="hideHints"
+          class="input"
+          type="text"
+          placeholder="Шаблон (по умолчанию: %i:%p)"
+        >
         <span class="icon is-small is-left">
           <i class="fas fa-file-export"></i>
         </span>
       </p>
       <div class="control">
-        <a class="button is-link">
+        <button class="button is-link" :class="{'is-loading': loadPullButton}" ref="pullButton" @click="pull">
           Экспорт
-        </a>
+        </button>
+        <a ref="download" class="download"></a>
+      </div>
+      <div class="control" title="Обновить список">
+        <button class="button is-success">
+          <span class="icon is-small">
+            <i class="fa fa-sync" aria-hidden="true"></i>
+          </span>
+        </button>
       </div>
       <div class="control" title="Очистить базу данных">
-        <a @click="openRemoveModal" class="button is-danger">
+        <button @click="openRemoveModal" class="button is-danger">
           <span class="icon is-small">
             <i class="fa fa-trash-alt" aria-hidden="true"></i>
           </span>
-        </a>
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+  const electron = window.require('electron')
+  const ipcRenderer = electron.ipcRenderer
+
   export default {
     data() {
       return {
         onHints: false,
-        onModalRemove: false
+        onModalRemove: false,
+        loadPullButton: false
       }
     },
 
@@ -71,6 +99,28 @@
 
       openRemoveModal() {
         this.onModalRemove = true
+      },
+
+      pull() {
+        this.loadPullButton = true
+
+        const pattern = this.$refs.pattern.value
+        const proxies = ipcRenderer.sendSync('proxies-pull', pattern)
+
+        if (proxies) {
+          const file = new Blob([proxies], {type: 'text/plain'})
+
+          this.$refs.download
+            .setAttribute('href', window.URL.createObjectURL(file))
+
+          this.$refs.download.setAttribute('download', 'proxies.txt')
+          this.$refs.download.click()
+
+          this.loadPullButton = false
+        } else {
+          this.loadPullButton = false
+          this.$refs.pullButton.innerText = 'Ошибка'
+        }
       }
     }
   }
@@ -79,5 +129,13 @@
 <style scoped>
   .message:not(:last-child) {
     margin-bottom: 0;
+  }
+
+  .download {
+    display: none;
+  }
+
+  .characters-description {
+    width: 100%;
   }
 </style>

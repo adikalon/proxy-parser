@@ -40,4 +40,8 @@ app.on('ready', () => {
   ipcMain.on('config-save', (event: any, fields: any) => {
     event.returnValue = Settings.updateAllSettings(fields)
   })
+
+  ipcMain.on('proxies-pull', (event: any, pattern: any) => {
+    event.returnValue = Proxies.getReadyData(pattern)
+  })
 })

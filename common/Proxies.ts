@@ -19,4 +19,28 @@ export default class Proxies {
 
     return this.connect().prepare(sql).all()
   }
+
+  public static getReadyData(pattern: string): string {
+    pattern = pattern.trim()
+
+    if (pattern === '') {
+      pattern = '%i:%p'
+    }
+
+    let result: string[] = []
+    const rows: any[]    = this.getAllProxy()
+
+    for (const row of rows) {
+      let format: string = pattern
+
+      format = format.replace(/%c/, row.country)
+      format = format.replace(/%i/, row.ip)
+      format = format.replace(/%p/, row.port)
+      format = format.replace(/%s/, row.source)
+
+      result.push(format)
+    }
+
+    return result.join('\r\n') + '\r\n'
+  }
 }
