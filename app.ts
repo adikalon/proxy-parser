@@ -48,4 +48,8 @@ app.on('ready', () => {
   ipcMain.on('proxies-all', (event: any) => {
     event.returnValue = Proxies.getAllProxy()
   })
+
+  ipcMain.on('proxies-truncate', (event: any) => {
+    event.returnValue = Proxies.truncateProxiesTable()
+  })
 })

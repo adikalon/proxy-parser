@@ -11,7 +11,7 @@
           <p>Все собранные ip-адреса будут удалены без возможности восстановить</p>
         </section>
         <footer class="modal-card-foot field is-grouped is-grouped-right">
-          <button class="button is-danger">Очистить</button>
+          <button @click="truncateTable" class="button is-danger">Очистить</button>
           <button @click="closeRemoveModal" class="button">Отмена</button>
         </footer>
       </div>
@@ -66,7 +66,12 @@
         </button>
       </div>
       <div class="control" title="Очистить базу данных">
-        <button @click="openRemoveModal" class="button is-danger">
+        <button
+          class="button is-danger"
+          :class="{'is-loading': loadTruncateButton}"
+          ref="truncateButton"
+          @click="openRemoveModal"
+        >
           <span class="icon is-small">
             <i class="fa fa-trash-alt" aria-hidden="true"></i>
           </span>
@@ -86,7 +91,8 @@
         onHints: false,
         onModalRemove: false,
         loadPullButton: false,
-        loadRefreshButton: false
+        loadRefreshButton: false,
+        loadTruncateButton: false
       }
     },
 
@@ -140,6 +146,22 @@
         } else {
           this.loadRefreshButton = false
           this.$refs.refreshButton.innerText = 'Ошибка'
+        }
+      },
+
+      truncateTable() {
+        this.closeRemoveModal()
+
+        this.loadTruncateButton = true
+
+        const truncate = ipcRenderer.sendSync('proxies-truncate')
+
+        if (truncate) {
+          this.$root.proxies = []
+          this.loadTruncateButton = false
+        } else {
+          this.loadTruncateButton = false
+          this.$refs.truncateButton.innerText = 'Ошибка'
         }
       }
     }

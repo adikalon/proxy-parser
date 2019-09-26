@@ -20,7 +20,7 @@ export default class Proxies {
     return this.connect().prepare(sql).all()
   }
 
-  public static getReadyData(pattern: string): string {
+  public static getReadyData (pattern: string): string {
     pattern = pattern.trim()
 
     if (pattern === '') {
@@ -42,5 +42,25 @@ export default class Proxies {
     }
 
     return result.join('\r\n') + '\r\n'
+  }
+
+  public static truncateProxiesTable (): boolean {
+    let sql: string = 'DELETE FROM `proxies`'
+    let stmt: sqlite.Statement<any[]> = this.connect().prepare(sql)
+    let res: sqlite.RunResult = stmt.run()
+
+    if (!Number.isInteger(res.changes) || res.changes < 0) {
+      return false
+    }
+
+    sql  = 'UPDATE `sqlite_sequence` SET `seq` = 1 WHERE `name` = "proxies"'
+    stmt = this.connect().prepare(sql)
+    res  = stmt.run()
+
+    if (res.changes !== 1) {
+      return false
+    }
+
+    return true
   }
 }
