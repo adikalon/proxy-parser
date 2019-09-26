@@ -54,7 +54,12 @@
         <a ref="download" class="download"></a>
       </div>
       <div class="control" title="Обновить список">
-        <button class="button is-success">
+        <button
+          class="button is-success"
+          :class="{'is-loading': loadRefreshButton}"
+          ref="refreshButton"
+          @click="refresh"
+        >
           <span class="icon is-small">
             <i class="fa fa-sync" aria-hidden="true"></i>
           </span>
@@ -80,7 +85,8 @@
       return {
         onHints: false,
         onModalRemove: false,
-        loadPullButton: false
+        loadPullButton: false,
+        loadRefreshButton: false
       }
     },
 
@@ -120,6 +126,20 @@
         } else {
           this.loadPullButton = false
           this.$refs.pullButton.innerText = 'Ошибка'
+        }
+      },
+
+      refresh() {
+        this.loadRefreshButton = true
+
+        const proxies = ipcRenderer.sendSync('proxies-all')
+
+        if (proxies) {
+          this.$root.proxies = proxies
+          this.loadRefreshButton = false
+        } else {
+          this.loadRefreshButton = false
+          this.$refs.refreshButton.innerText = 'Ошибка'
         }
       }
     }

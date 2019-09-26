@@ -22,7 +22,7 @@
         </tr>
       </tfoot>
       <tbody>
-        <tr v-for="proxy in proxies" :key="proxy.id">
+        <tr v-for="proxy in this.$root.proxies" :key="proxy.id">
           <td>{{ proxy.country }}</td>
           <td>{{ proxy.ip }}</td>
           <td>{{ proxy.port }}</td>
@@ -37,11 +37,6 @@
 
 <script>
   export default {
-    data() {
-      return {
-        proxies: this.$root.proxies
-      }
-    },
     methods: {
       dateFormat(timestamp) {
         const date  = new Date(timestamp)

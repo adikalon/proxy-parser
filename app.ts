@@ -44,4 +44,8 @@ app.on('ready', () => {
   ipcMain.on('proxies-pull', (event: any, pattern: any) => {
     event.returnValue = Proxies.getReadyData(pattern)
   })
+
+  ipcMain.on('proxies-all', (event: any) => {
+    event.returnValue = Proxies.getAllProxy()
+  })
 })
