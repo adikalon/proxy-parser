@@ -5,10 +5,12 @@
         <div class="field has-addons">
           <p class="control has-icons-left">
             <span class="select">
-              <select>
-                <option selected>Country</option>
-                <option>Select dropdown</option>
-                <option>With options</option>
+              <select @change="changeParser">
+                <option
+                  v-for="(parser, key) in this.$root.parsers"
+                  :key="key"
+                  :value="key"
+                >{{ parser.name }}</option>
               </select>
             </span>
             <span class="icon is-small is-left">
@@ -87,6 +89,11 @@
       scrollConsoleToBottom() {
         let console = this.$el.querySelector("#console")
         console.scrollTop = console.scrollHeight
+      },
+
+      changeParser(event) {
+        const key = event.target.value
+        this.$root.parserDescription = this.$root.parsers[key].description
       }
     }
   }

@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import Settings from './common/Settings'
 import Proxies from './common/Proxies'
+import Interaction from './parser/common/Interaction'
 
 const config: object[][] = Settings.getAllSettings()
 const proxies: any[] = Proxies.getAllProxy()
@@ -35,6 +36,7 @@ app.on('ready', () => {
   window.webContents.on('did-finish-load', () => {
     window.webContents.send('config-data', config)
     window.webContents.send('proxies-data', proxies)
+    window.webContents.send('parsers-data', Interaction.list())
   })
 
   ipcMain.on('config-save', (event: any, fields: any) => {

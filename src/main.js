@@ -15,7 +15,9 @@ function getData (event, fn) {
 
 const data = {
   settings: [],
-  proxies: []
+  proxies: [],
+  parsers: [],
+  parserDescription: ''
 }
 
 getData('config-data', function (value) {
@@ -24,6 +26,14 @@ getData('config-data', function (value) {
 
 getData('proxies-data', function (value) {
   data.proxies = value
+})
+
+getData('parsers-data', function (value) {
+  data.parsers = value
+
+  if (data.parsers.length > 0) {
+    data.parserDescription = data.parsers[0].description
+  }
 })
 
 Vue.use(VueRouter)
