@@ -4,7 +4,7 @@
       <app-menu></app-menu>
       <article class="message is-dark">
         <div class="message-body">
-          {{ this.$root.parserDescription }}
+          {{ this.$root.description }}
         </div>
       </article>
     </div>

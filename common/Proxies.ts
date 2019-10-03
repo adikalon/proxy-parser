@@ -34,6 +34,7 @@ export default class Proxies {
       let format: string = pattern
 
       format = format.replace(/%c/, row.country)
+      format = format.replace(/%t/, row.type)
       format = format.replace(/%i/, row.ip)
       format = format.replace(/%p/, row.port)
       format = format.replace(/%s/, row.source)

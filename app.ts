@@ -6,6 +6,7 @@ import Interaction from './parser/common/Interaction'
 const config: object[][] = Settings.getAllSettings()
 const proxies: any[] = Proxies.getAllProxy()
 
+let stop: boolean = false
 let url: string
 
 if (process.env.NODE_ENV === 'DEV') {
@@ -21,7 +22,7 @@ app.on('ready', () => {
     webPreferences: {
       nodeIntegration: true
     }
-  });
+  })
 
   if (process.env.NODE_ENV === 'DEV') {
     window.webContents.openDevTools()
@@ -53,5 +54,25 @@ app.on('ready', () => {
 
   ipcMain.on('proxies-truncate', (event: any) => {
     event.returnValue = Proxies.truncateProxiesTable()
+  })
+
+  ipcMain.on('parser-stop', (event: any) => {
+    stop = true
+  })
+
+  ipcMain.on('parser-start', (event: any, file: string) => {
+    const Parser = require(`./parser/parsers/${file}`)
+
+    const parser = new Parser()
+
+    const interval: NodeJS.Timeout = setInterval(() => {
+      if (stop) {
+        clearInterval(interval)
+        stop = false
+        event.reply('parser-finish')
+      }
+
+      window.webContents.send('parser-log', { date: new Date().getTime(), message: parser.getDescription() })
+    }, 2000)
   })
 })

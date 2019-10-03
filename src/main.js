@@ -17,7 +17,10 @@ const data = {
   settings: [],
   proxies: [],
   parsers: [],
-  parserDescription: ''
+  logs: [],
+  runned: false,
+  loading: false,
+  description: ''
 }
 
 getData('config-data', function (value) {
@@ -28,11 +31,15 @@ getData('proxies-data', function (value) {
   data.proxies = value
 })
 
+getData('parser-log', function (value) {
+  data.logs.push(value)
+})
+
 getData('parsers-data', function (value) {
   data.parsers = value
 
   if (data.parsers.length > 0) {
-    data.parserDescription = data.parsers[0].description
+    data.description = data.parsers[0].description
   }
 })
 

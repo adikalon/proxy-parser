@@ -24,7 +24,13 @@
     <div id="buttons">
       <div class="field is-grouped is-grouped-right">
         <p class="control">
-          <a class="button is-link" ref="saveButton" :class="{'is-loading': loadSaveButton}" @click="send">
+          <a
+            class="button is-link"
+            ref="saveButton"
+            :class="{'is-loading': loadSaveButton}"
+            @click="send"
+            :disabled="this.$root.runned ? true : false"
+          >
             <span class="icon is-small" v-if="okIcon">
               <i class="fas fa-check"></i>
             </span>
@@ -55,6 +61,10 @@
     },
     methods: {
       send() {
+        if (this.$root.runned) {
+          return null
+        }
+
         this.loadSaveButton = true
 
         let fields = {}

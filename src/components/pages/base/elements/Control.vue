@@ -24,11 +24,13 @@
         <table class="characters-description">
           <tr>
             <td><b>%c</b> - страна</td>
+            <td><b>%t</b> - тип</td>
             <td><b>%i</b> - IP</td>
           </tr>
           <tr>
             <td><b>%p</b> - порт</td>
             <td><b>%s</b> - источник</td>
+            <td></td>
           </tr>
         </table>
       </div>

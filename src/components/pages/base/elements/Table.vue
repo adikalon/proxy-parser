@@ -4,6 +4,7 @@
       <thead>
         <tr>
           <th>Страна</th>
+          <th>Тип</th>
           <th>IP</th>
           <th>Порт</th>
           <th>Источник</th>
@@ -14,6 +15,7 @@
       <tfoot>
         <tr>
           <th>Страна</th>
+          <th>Тип</th>
           <th>IP</th>
           <th>Порт</th>
           <th>Источник</th>
@@ -24,6 +26,7 @@
       <tbody>
         <tr v-for="proxy in this.$root.proxies" :key="proxy.id">
           <td>{{ proxy.country }}</td>
+          <td>{{ proxy.type }}</td>
           <td>{{ proxy.ip }}</td>
           <td>{{ proxy.port }}</td>
           <td>{{ proxy.source }}</td>

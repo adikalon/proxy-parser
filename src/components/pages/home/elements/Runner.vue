@@ -5,7 +5,7 @@
         <div class="field has-addons">
           <p class="control has-icons-left">
             <span class="select">
-              <select @change="changeParser">
+              <select ref="currentParser" @change="changeParser" :disabled="this.$root.runned ? true : false">
                 <option
                   v-for="(parser, key) in this.$root.parsers"
                   :key="key"
@@ -18,16 +18,27 @@
             </span>
           </p>
           <p class="control" title="Очистить метки">
-            <a class="button">
+            <a class="button" :disabled="this.$root.runned ? true : false">
               <span class="icon is-small">
                 <i class="fa fa-trash-alt" aria-hidden="true"></i>
               </span>
             </a>
           </p>
-          <p class="control" title="Запустить парсер">
-            <a class="button">
+          <p class="control">
+            <a
+              ref="runButton"
+              class="button"
+              :class="{'is-loading': this.$root.loading}"
+              @click="runParser"
+              :title="this.$root.runned ? 'Остановить парсер' : 'Запустить парсер'"
+              :disabled="this.$root.loading ? true : false"
+            >
               <span class="icon is-small">
-                <i class="fa fa-play" aria-hidden="true"></i>
+                <i
+                  class="fa"
+                  :class="{'fa-play': !this.$root.runned, 'fa-stop': this.$root.runned}"
+                  aria-hidden="true"
+                ></i>
               </span>
             </a>
           </p>
@@ -35,22 +46,22 @@
       </div>
       <div class="nav-item">
         <div class="field has-addons">
-          <p class="control" @click="clearConsole" title="Очистить консоль">
-            <a class="button">
+          <p class="control">
+            <a class="button" @click="clearConsole" title="Очистить консоль">
               <span class="icon is-small">
                 <i class="fa fa-recycle" aria-hidden="true"></i>
               </span>
             </a>
           </p>
-          <p class="control" @click="scrollConsoleToTop" title="Консоль вверх">
-            <a class="button">
+          <p class="control">
+            <a class="button" @click="scrollConsoleToTop" title="Консоль вверх">
               <span class="icon is-small">
                 <i class="fa fa-chevron-up" aria-hidden="true"></i>
               </span>
             </a>
           </p>
-          <p class="control" @click="scrollConsoleToBottom" title="Консоль вниз">
-            <a class="button">
+          <p class="control">
+            <a class="button" @click="scrollConsoleToBottom" title="Консоль вниз">
               <span class="icon is-small">
                 <i class="fa fa-chevron-down" aria-hidden="true"></i>
               </span>
@@ -60,24 +71,19 @@
       </div>
     </div>
     <div id="console">
-      <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Deleniti numquam laudantium dicta, nobis nemo fugit beatae cupiditate veniam ex ducimus libero eius blanditiis perspiciatis incidunt nihil consequatur quam consequuntur quidem.
-      Cumque, numquam hic aut architecto esse iste, vero ab ea ratione, fugit corporis magni laboriosam enim error. Ea perferendis cupiditate dolore. Aut quis cum saepe molestias quasi omnis rerum magni.
-      Ad nihil quis nostrum, corrupti quisquam illo officia minus possimus eaque iusto odit cupiditate cumque, et mollitia natus esse, dolorem facilis consequuntur voluptates quo fuga maxime. Qui error molestias praesentium!
-      Alias possimus eum beatae sapiente, nobis reprehenderit amet! Sapiente voluptatibus totam perferendis corporis quae laborum veniam atque dignissimos debitis alias. Vitae vero exercitationem et debitis hic nam amet nulla omnis.
-      Eos aliquam, nemo necessitatibus quas, dolore eaque nesciunt itaque dicta magni, quo natus ex non unde iste veritatis tenetur magnam eveniet qui expedita molestias omnis excepturi numquam beatae. Quam, ex.
-      Porro rem, quisquam nostrum exercitationem praesentium vero voluptatum, deleniti, cum beatae fugit quam accusamus incidunt omnis repudiandae! Inventore possimus ab veritatis quidem saepe perspiciatis a id doloribus voluptas. Fugit, vitae?
-      Nostrum repudiandae ipsam commodi quaerat tenetur dolores culpa dicta. Quidem assumenda voluptate nisi officia sapiente dolorum aspernatur, eius quibusdam alias rerum molestias facere recusandae aut, maxime iste eos veniam minus?
-      Obcaecati harum inventore enim explicabo quo commodi suscipit debitis expedita deleniti ratione accusantium temporibus at animi ab, illum voluptas? Autem, fugit debitis qui reprehenderit libero necessitatibus voluptatem doloremque magnam vitae.
-      Nulla optio, delectus sunt unde in nesciunt! Quidem ipsam possimus soluta quod deserunt perspiciatis, inventore eum minima. At incidunt doloribus aut eius! Nihil quibusdam dolorum eos obcaecati! Perspiciatis, ad consequatur?
-      Optio dignissimos aspernatur nihil iure aut quia error culpa hic ad quis. Ea consectetur vero voluptate quam, fugiat sunt eaque. Sunt distinctio sapiente debitis id porro at obcaecati tempore nemo!</p>
+      <p v-for="(log, key) in this.$root.logs" :key="key">{{ log.date }} - {{ log.message }}</p>
     </div>
   </div>
 </template>
 
 <script>
+  const electron = window.require('electron')
+  const ipcRenderer = electron.ipcRenderer
+
   export default {
     methods: {
       clearConsole() {
+        this.$root.logs = []
         this.$el.querySelector("#console").innerHTML = ''
       },
 
@@ -93,8 +99,32 @@
 
       changeParser(event) {
         const key = event.target.value
-        this.$root.parserDescription = this.$root.parsers[key].description
+        this.$root.description = this.$root.parsers[key].description
+      },
+
+      runParser() {
+        if (this.$root.loading) {
+          return null
+        }
+
+        if (this.$root.runned) {
+          this.$root.loading = true
+
+          ipcRenderer.send('parser-stop')
+        } else {
+          this.$root.runned = true
+          const key   = this.$refs.currentParser.value
+          const file  = this.$root.parsers[key].file
+
+          ipcRenderer.send('parser-start', file)
+        }
       }
+    },
+    mounted() {
+      ipcRenderer.on('parser-finish', (event, arg) => {
+        this.$root.loading = false
+        this.$root.runned  = false
+      })
     }
   }
 </script>
