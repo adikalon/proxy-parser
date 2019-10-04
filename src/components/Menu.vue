@@ -3,7 +3,13 @@
     <ul>
       <router-link tag="li" exact to="/" active-class="is-active">
         <a>
-          <span class="icon is-small"><i class="fas fa-play-circle" aria-hidden="true"></i></span>
+          <span class="icon is-small">
+            <i
+              class="fas"
+              :class="{'fa-circle-notch fa-spin': this.$root.runned, 'fa-play-circle': !this.$root.runned}"
+              aria-hidden="true"
+            ></i>
+          </span>
           <span>Парсер</span>
         </a>
       </router-link>
