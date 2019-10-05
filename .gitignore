@@ -1,5 +1,6 @@
 /node_modules/
 /dist/
+/logs/
 *.js
 !/public/**/*.js
 !/src/**/*.js

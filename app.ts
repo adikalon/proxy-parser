@@ -58,7 +58,7 @@ app.on('ready', () => {
   })
 
   ipcMain.on('parser-stop', (event: any) => {
-    if (typeof Parser !== 'undefined') {
+    if (typeof Parser !== undefined) {
       Parser.denyOperate()
     }
   })
