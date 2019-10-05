@@ -2,11 +2,12 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import Settings from './common/Settings'
 import Proxies from './common/Proxies'
 import Interaction from './parser/common/Interaction'
+import AParser from './parser/common/Parser'
 
 const config: object[][] = Settings.getAllSettings()
 const proxies: any[] = Proxies.getAllProxy()
 
-let stop: boolean = false
+let Parser: undefined|AParser = undefined
 let url: string
 
 if (process.env.NODE_ENV === 'DEV') {
@@ -57,22 +58,24 @@ app.on('ready', () => {
   })
 
   ipcMain.on('parser-stop', (event: any) => {
-    stop = true
+    if (typeof Parser !== 'undefined') {
+      Parser.denyOperate()
+    }
   })
 
   ipcMain.on('parser-start', (event: any, file: string) => {
-    const Parser = require(`./parser/parsers/${file}`)
+    const CParser = require(`./parser/parsers/${file}`)
 
-    const parser = new Parser()
+    Parser = new CParser()
 
     const interval: NodeJS.Timeout = setInterval(() => {
-      if (stop) {
+      if (!Parser.isOperate()) {
         clearInterval(interval)
-        stop = false
+        Parser.allowOperate()
         event.reply('parser-finish')
       }
 
-      window.webContents.send('parser-log', { date: new Date().getTime(), message: parser.getDescription() })
+      window.webContents.send('parser-log', { date: new Date().getTime(), message: Parser.getDescription() })
     }, 2000)
   })
 })
