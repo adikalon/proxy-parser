@@ -16,7 +16,7 @@ export default abstract class Parser {
     return this.operate
   }
 
-  public error (message: string): void {
+  private error (message: string): void {
     const date: Date    = new Date()
     const day: string   = ('0' + date.getDate()).slice(-2)
     const month: string = ('0' + (date.getMonth() + 1)).slice(-2)
