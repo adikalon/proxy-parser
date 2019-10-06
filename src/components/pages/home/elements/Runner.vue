@@ -18,9 +18,15 @@
             </span>
           </p>
           <p class="control" title="Очистить метки">
-            <a class="button" :disabled="this.$root.runned ? true : false">
+            <a
+              class="button"
+              :class="{'is-loading': loadClearButton}"
+              :disabled="this.$root.runned ? true : false"
+              @click="clearMarks"
+              ref="clearButton"
+            >
               <span class="icon is-small">
-                <i class="fa fa-trash-alt" aria-hidden="true"></i>
+                <i class="fa" :class="{'fa-check': clearOkIcon, 'fa-trash-alt': !clearOkIcon}" aria-hidden="true"></i>
               </span>
             </a>
           </p>
@@ -81,6 +87,12 @@
   const ipcRenderer = electron.ipcRenderer
 
   export default {
+    data() {
+      return {
+        loadClearButton: false,
+        clearOkIcon: false
+      }
+    },
     methods: {
       clearConsole() {
         this.$root.logs = []
@@ -100,6 +112,21 @@
       changeParser(event) {
         const key = event.target.value
         this.$root.description = this.$root.parsers[key].description
+      },
+
+      clearMarks() {
+        this.loadClearButton = true
+
+        const key   = this.$refs.currentParser.value
+        const name  = this.$root.parsers[key].name
+
+        if (ipcRenderer.sendSync('parser-clear', name)) {
+          this.loadClearButton = false
+          this.clearOkIcon = true
+        } else {
+          this.loadClearButton = false
+          this.$refs.clearButton.innerText = 'Ошибка'
+        }
       },
 
       runParser() {

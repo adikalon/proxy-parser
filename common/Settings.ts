@@ -1,5 +1,5 @@
 
-import sqlite = require('better-sqlite3');
+import sqlite = require('better-sqlite3')
 import path = require('path')
 
 export default class Settings {

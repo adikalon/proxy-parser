@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import Settings from './common/Settings'
 import Proxies from './common/Proxies'
+import Marks from './common/Marks'
 import Interaction from './parser/common/Interaction'
 import AParser from './parser/common/Parser'
 
@@ -74,5 +75,9 @@ app.on('ready', () => {
 
       window.webContents.send('parser-log', { date: new Date().getTime(), message: Parser.getDescription() })
     }, 2000)
+  })
+
+  ipcMain.on('parser-clear', (event: any, name: string) => {
+    event.returnValue = Marks.clearPage(name)
   })
 })
