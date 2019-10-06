@@ -84,6 +84,8 @@
         if (ipcRenderer.sendSync('config-save', fields)) {
           this.loadSaveButton = false
           this.okIcon         = true
+
+          setTimeout(() => this.okIcon = false, 1000)
         } else {
           this.$refs.saveButton.innerText = 'Ошибка'
           this.loadSaveButton = false

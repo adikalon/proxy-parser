@@ -123,6 +123,8 @@
         if (ipcRenderer.sendSync('parser-clear', name)) {
           this.loadClearButton = false
           this.clearOkIcon = true
+
+          setTimeout(() => this.clearOkIcon = false, 1000)
         } else {
           this.loadClearButton = false
           this.$refs.clearButton.innerText = 'Ошибка'
