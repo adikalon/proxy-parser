@@ -19,6 +19,7 @@
     <article class="message" v-show="onHints">
       <div class="message-header">
         <p>Спецсимволы</p>
+        <button class="delete" aria-label="delete" @click="hideHints"></button>
       </div>
       <div class="message-body">
         <table class="characters-description">
@@ -33,6 +34,11 @@
             <td></td>
           </tr>
         </table>
+        <div class="types-title">Типы:</div>
+        <label class="checkbox type-block" v-for="(type, key) in this.$root.types" :key="key">
+          <input type="checkbox" class="type-field" :value="type" checked>
+          {{ type }}
+        </label>
       </div>
     </article>
     <div class="field has-addons">
@@ -40,7 +46,6 @@
         <input
           ref="pattern"
           @focus="showHints"
-          @blur="hideHints"
           class="input"
           type="text"
           placeholder="Шаблон (по умолчанию: %i:%p)"
@@ -118,10 +123,38 @@
       pull() {
         this.loadPullButton = true
 
-        const pattern = this.$refs.pattern.value
-        const proxies = ipcRenderer.sendSync('proxies-pull', pattern)
+        let pattern = this.$refs.pattern.value.trim()
 
-        if (proxies) {
+        if (pattern === '') {
+          pattern = '%i:%p'
+        }
+
+        let types   = []
+        let proxies = []
+
+        for (const input of document.querySelectorAll('.type-field:checked')) {
+          types.push(input.value)
+        }
+
+        for (const proxy of this.$root.proxies) {
+          if (types.indexOf(proxy.type) === -1) {
+            continue
+          }
+
+          let format = pattern
+
+          format = format.replace(/%c/, proxy.country)
+          format = format.replace(/%t/, proxy.type)
+          format = format.replace(/%i/, proxy.ip)
+          format = format.replace(/%p/, proxy.port)
+          format = format.replace(/%s/, proxy.source)
+
+          proxies.push(format)
+        }
+
+        if (proxies.length > 0) {
+          proxies = proxies.join('\r\n') + '\r\n'
+
           const file = new Blob([proxies], {type: 'text/plain'})
 
           this.$refs.download
@@ -181,5 +214,15 @@
 
   .characters-description {
     width: 100%;
+  }
+
+  .types-title {
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 5px;
+  }
+
+  .type-block {
+    margin-right: 20px;
   }
 </style>

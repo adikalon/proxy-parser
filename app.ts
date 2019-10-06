@@ -39,14 +39,11 @@ app.on('ready', () => {
     window.webContents.send('config-data', config)
     window.webContents.send('proxies-data', proxies)
     window.webContents.send('parsers-data', Interaction.list())
+    window.webContents.send('proxy-types', Proxies.getTypes())
   })
 
   ipcMain.on('config-save', (event: any, fields: any) => {
     event.returnValue = Settings.updateAllSettings(fields)
-  })
-
-  ipcMain.on('proxies-pull', (event: any, pattern: any) => {
-    event.returnValue = Proxies.getReadyData(pattern)
   })
 
   ipcMain.on('proxies-all', (event: any) => {

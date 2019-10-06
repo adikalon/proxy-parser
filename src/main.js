@@ -18,6 +18,7 @@ const data = {
   proxies: [],
   parsers: [],
   logs: [],
+  types: [],
   runned: false,
   loading: false,
   description: ''
@@ -33,6 +34,10 @@ getData('proxies-data', function (value) {
 
 getData('parser-log', function (value) {
   data.logs.push(value)
+})
+
+getData('proxy-types', function (value) {
+  data.types = value
 })
 
 getData('parsers-data', function (value) {

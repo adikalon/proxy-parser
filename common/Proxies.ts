@@ -20,31 +20,6 @@ export default class Proxies {
     return this.connect().prepare(sql).all()
   }
 
-  public static getReadyData (pattern: string): string {
-    pattern = pattern.trim()
-
-    if (pattern === '') {
-      pattern = '%i:%p'
-    }
-
-    let result: string[] = []
-    const rows: any[]    = this.getAllProxy()
-
-    for (const row of rows) {
-      let format: string = pattern
-
-      format = format.replace(/%c/, row.country)
-      format = format.replace(/%t/, row.type)
-      format = format.replace(/%i/, row.ip)
-      format = format.replace(/%p/, row.port)
-      format = format.replace(/%s/, row.source)
-
-      result.push(format)
-    }
-
-    return result.join('\r\n') + '\r\n'
-  }
-
   public static truncateProxiesTable (): boolean {
     let sql: string = 'DELETE FROM `proxies`'
     let stmt: sqlite.Statement<any[]> = this.connect().prepare(sql)
@@ -63,5 +38,18 @@ export default class Proxies {
     }
 
     return true
+  }
+
+  public static getTypes (): string[] {
+    let types: string[] = []
+
+    const sql: string = 'SELECT DISTINCT `type` FROM `proxies`'
+    const rows: any[] = this.connect().prepare(sql).all()
+
+    for (const row of rows) {
+      types.push(row.type)
+    }
+
+    return types
   }
 }
