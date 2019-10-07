@@ -29,7 +29,7 @@
             ref="saveButton"
             :class="{'is-loading': loadSaveButton}"
             @click="send"
-            :disabled="this.$root.runned ? true : false"
+            :disabled="(this.$root.runned || this.okIcon) ? true : false"
           >
             <span class="icon is-small" v-if="okIcon">
               <i class="fas fa-check"></i>
@@ -61,7 +61,7 @@
     },
     methods: {
       send() {
-        if (this.$root.runned) {
+        if (this.$root.runned || this.okIcon) {
           return null
         }
 

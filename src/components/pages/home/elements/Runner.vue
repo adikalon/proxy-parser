@@ -21,7 +21,7 @@
             <a
               class="button"
               :class="{'is-loading': loadClearButton}"
-              :disabled="this.$root.runned ? true : false"
+              :disabled="(this.$root.runned || this.clearOkIcon) ? true : false"
               @click="clearMarks"
               ref="clearButton"
             >
@@ -37,7 +37,7 @@
               :class="{'is-loading': this.$root.loading}"
               @click="runParser"
               :title="this.$root.runned ? 'Остановить парсер' : 'Запустить парсер'"
-              :disabled="this.$root.loading ? true : false"
+              :disabled="(this.$root.loading || this.clearOkIcon) ? true : false"
             >
               <span class="icon is-small">
                 <i
@@ -115,6 +115,10 @@
       },
 
       clearMarks() {
+        if (this.$root.runned || this.clearOkIcon) {
+          return null
+        }
+
         this.loadClearButton = true
 
         const key   = this.$refs.currentParser.value
@@ -132,7 +136,7 @@
       },
 
       runParser() {
-        if (this.$root.loading) {
+        if (this.$root.loading || this.clearOkIcon) {
           return null
         }
 
