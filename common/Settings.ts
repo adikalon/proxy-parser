@@ -3,6 +3,8 @@ import sqlite = require('better-sqlite3')
 import path = require('path')
 
 export default class Settings {
+  public static proxyLimit: string = 'proxy_limit'
+
   private static db: sqlite.Database = null
 
   private static connect (): sqlite.Database {
@@ -50,5 +52,16 @@ export default class Settings {
     }
 
     return updated
+  }
+
+  public static getSpecificOption (field: string): string {
+    const sql: string = "SELECT `value` FROM `settings` WHERE `name` = ? LIMIT 1"
+    const row: any = this.connect().prepare(sql).get(field)
+
+    if (row === undefined) {
+      return ''
+    } else {
+      return row.value
+    }
   }
 }

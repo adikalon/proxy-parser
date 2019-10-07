@@ -22,17 +22,17 @@ export default class Marks {
     if (row !== undefined) {
       const sql: string = 'UPDATE `marks` SET `value` = 1 WHERE `id` = ?'
       const stmt: sqlite.Statement<any[]> = this.connect().prepare(sql)
-      const update: sqlite.RunResult = stmt.run(row.id)
+      const exec: sqlite.RunResult = stmt.run(row.id)
 
-      if (update.changes >= 1) {
+      if (exec.changes >= 1) {
         result = true
       }
     } else {
       const sql: string = "INSERT INTO `marks` (`key`, `parser`, `value`) VALUES ('page', ?, 1)"
       const stmt: sqlite.Statement<any[]> = this.connect().prepare(sql)
-      const insert: sqlite.RunResult = stmt.run(parser)
+      const exec: sqlite.RunResult = stmt.run(parser)
 
-      if (insert.changes >= 1) {
+      if (exec.changes >= 1) {
         result = true
       }
     }
