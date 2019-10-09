@@ -1,3 +1,4 @@
+import { ProxyData } from './../../common/Types'
 import path = require('path')
 import fs = require('fs')
 
@@ -51,5 +52,5 @@ export default abstract class Parser {
   abstract getName (): string
   abstract getDescription (): string
 
-  abstract getProxies (page: number): {country: string, type: string, ip: string, port: number, source: string}[]
+  abstract getProxies (page: number): ProxyData[]
 }

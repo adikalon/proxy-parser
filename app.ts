@@ -3,6 +3,8 @@ import Settings from './common/Settings'
 import Proxies from './common/Proxies'
 import Marks from './common/Marks'
 import Interaction from './parser/common/Interaction'
+import LogCompiler from './common/LogCompiler'
+import { ProxyData, LogMessage } from './common/Types'
 import AParser from './parser/common/Parser'
 
 const config: object[][] = Settings.getAllSettings()
@@ -61,23 +63,67 @@ app.on('ready', () => {
     }
   })
 
+  ipcMain.on('parser-clear', (event: any, name: string) => {
+    event.returnValue = Marks.clearPage(name)
+  })
+
   ipcMain.on('parser-start', (event: any, file: string) => {
-    const CParser = require(`./parser/parsers/${file}`)
+    const CParser: any       = require(`./parser/parsers/${file}`)
+    const maxPage: number    = +Settings.getSpecificOption(Settings.maxPage)
+    const parserName: string = file.replace(/\.js$/, '')
+
+    let resetPage: boolean = true
 
     Parser = new CParser()
 
-    const interval: NodeJS.Timeout = setInterval(() => {
+    const page: number   = Marks.getPage(parserName)
+
+    for (let p = page; p <= maxPage; p++) {
       if (!Parser.isOperate()) {
-        clearInterval(interval)
-        Parser.allowOperate()
-        event.reply('parser-finish')
+        resetPage = false
+        break
       }
 
-      window.webContents.send('parser-log', { date: new Date().getTime(), message: Parser.getDescription() })
-    }, 2000)
-  })
+      if (!Marks.setPage(parserName, p)) {
+        resetPage = false
+        window.webContents.send('parser-log', LogCompiler.setPageError(p))
+        break
+      }
 
-  ipcMain.on('parser-clear', (event: any, name: string) => {
-    event.returnValue = Marks.clearPage(name)
+      const proxies: ProxyData[] = Parser.getProxies(p)
+
+      if (proxies.length <= 0) {
+        break
+      }
+
+      for (const proxy of proxies) {
+        if (!Parser.isOperate()) {
+          resetPage = false
+          break
+        }
+
+        const push: boolean | null = Proxies.push(proxy)
+        let message: LogMessage
+
+        if (push === true) {
+          message = LogCompiler.insertProxy(proxy, p)
+        } else if (push === null) {
+          message = LogCompiler.updateProxy(proxy, p)
+        } else {
+          message = LogCompiler.errorProxy(proxy, p)
+        }
+
+        window.webContents.send('parser-log', message)
+      }
+    }
+
+    if (resetPage) {
+      if (!Marks.clearPage(parserName)) {
+        window.webContents.send('parser-log', LogCompiler.clearPageError())
+      }
+    }
+
+    Parser.allowOperate()
+    event.reply('parser-finish', LogCompiler.parserFinish())
   })
 })

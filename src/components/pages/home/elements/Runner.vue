@@ -77,7 +77,10 @@
       </div>
     </div>
     <div id="console">
-      <p v-for="(log, key) in this.$root.logs" :key="key">{{ log.date }} - {{ log.message }}</p>
+      <div class="log-message-block" v-for="(log, key) in this.$root.logs" :key="key">
+        <p class="log-message-date">{{ dateFormat(log.date) }}</p>
+        <p v-html="log.message"></p>
+      </div>
     </div>
   </div>
 </template>
@@ -94,6 +97,17 @@
       }
     },
     methods: {
+      dateFormat(timestamp) {
+        const date  = new Date(timestamp)
+        const hour  = ('0' + date.getHours()).slice(-2)
+        const min   = ('0' + date.getMinutes()).slice(-2)
+        const sec   = ('0' + date.getSeconds()).slice(-2)
+        const msec  = ('0' + date.getMilliseconds()).slice(-3)
+        const total = `${hour}:${min}:${sec}.${msec}`
+
+        return total
+      },
+
       clearConsole() {
         this.$root.logs = []
         this.$el.querySelector("#console").innerHTML = ''
@@ -154,9 +168,11 @@
       }
     },
     mounted() {
-      ipcRenderer.on('parser-finish', (event, arg) => {
+      ipcRenderer.on('parser-finish', (event, message) => {
         this.$root.loading = false
         this.$root.runned  = false
+
+        this.$root.logs.push(message)
       })
     }
   }
@@ -171,6 +187,7 @@
     overflow: auto;
     background-color: #3B3F44;
     color: #FFFFFF;
+    line-height: 120%;
     max-height: calc(100% - 36px);
     min-height: calc(100% - 36px);
   }
@@ -179,5 +196,13 @@
     display:flex;
     flex-direction:row;
     justify-content: space-between;
+  }
+
+  .log-message-block:not(:first-child) {
+    margin-top: 15px;
+  }
+
+  .log-message-date {
+    font-weight: bold;
   }
 </style>

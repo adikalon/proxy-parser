@@ -4,6 +4,7 @@ import path = require('path')
 
 export default class Settings {
   public static proxyLimit: string = 'proxy_limit'
+  public static maxPage: string    = 'max_page'
 
   private static db: sqlite.Database = null
 

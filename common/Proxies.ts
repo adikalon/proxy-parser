@@ -1,4 +1,5 @@
 
+import { ProxyData } from './Types'
 import Settings from './Settings'
 import sqlite = require('better-sqlite3')
 import path = require('path')
@@ -77,8 +78,8 @@ export default class Proxies {
     return result
   }
 
-  public static push (data: {country: string, type: string, ip: string, port: number, source: string}): boolean {
-    let result: boolean = false
+  public static push (data: ProxyData): boolean | null {
+    let result: boolean | null = false
 
     const sql: string = "SELECT `id` FROM `proxies` WHERE `ip` = ? LIMIT 1"
     const row: any = this.connect().prepare(sql).get(data.ip)
@@ -94,7 +95,7 @@ export default class Proxies {
       const exec: sqlite.RunResult = stmt.run(data.country, data.type, data.port, data.source, date, row.id)
 
       if (exec.changes >= 1) {
-        result = true
+        result = null
       }
     } else {
       const sql: string = "INSERT INTO `proxies` " +

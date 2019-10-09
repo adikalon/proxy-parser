@@ -8,4 +8,14 @@ module.exports = class Hidemy extends Parser {
   public getDescription (): string {
     return 'Hidemi - бесплатные прокси'
   }
+
+  public getProxies (page: number): {country: string, type: string, ip: string, port: number, source: string}[] {
+    return [{
+      country: 'temp',
+      type: 'temp',
+      ip: 'temp',
+      port: 0,
+      source: 'temp',
+    }]
+  }
 }
