@@ -55,7 +55,13 @@
         </span>
       </p>
       <div class="control">
-        <button class="button is-link" :class="{'is-loading': loadPullButton}" ref="pullButton" @click="pull">
+        <button
+          ref="pullButton"
+          class="button is-link"
+          :class="{'is-loading': loadPullButton}"
+          :disabled="this.loadPullButton ? true : false"
+          @click="pull"
+        >
           Экспорт
         </button>
         <a ref="download" class="download"></a>
@@ -121,6 +127,10 @@
       },
 
       pull() {
+        if (this.loadPullButton) {
+          return null
+        }
+
         this.loadPullButton = true
 
         let pattern = this.$refs.pattern.value.trim()
