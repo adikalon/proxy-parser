@@ -50,4 +50,6 @@ export default abstract class Parser {
 
   abstract getName (): string
   abstract getDescription (): string
+
+  abstract getProxies (page: number): {country: string, type: string, ip: string, port: number, source: string}[]
 }

@@ -39,4 +39,19 @@ export default class Marks {
 
     return result
   }
+
+  public static getPage (parser: string): number {
+    const sql = "SELECT `value` FROM `marks` WHERE `key` = 'page' AND `parser` = ? LIMIT 1"
+    const row: any = this.connect().prepare(sql).get(parser)
+
+    if (row === undefined) {
+      return 1
+    } else {
+      if (!isNaN(row.value)) {
+        return +row.value
+      } else {
+        return 1
+      }
+    }
+  }
 }

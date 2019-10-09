@@ -54,6 +54,23 @@ export default class Settings {
     return updated
   }
 
+  public static getAll (): {} {
+    let settings = {}
+
+    const sql: string = 'SELECT * FROM `settings`'
+    const rows: any[] = this.connect().prepare(sql).all()
+
+    for (const row of rows) {
+      if (!isNaN(row.value)) {
+        row.value = +row.value
+      }
+
+      settings[row.name] = row.value
+    }
+
+    return settings
+  }
+
   public static getSpecificOption (field: string): string {
     const sql: string = "SELECT `value` FROM `settings` WHERE `name` = ? LIMIT 1"
     const row: any = this.connect().prepare(sql).get(field)
