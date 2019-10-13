@@ -25,12 +25,12 @@
           <span>Настройки</span>
         </a>
       </router-link>
-      <router-link tag="li" to="/about" active-class="is-active">
+      <!-- <router-link tag="li" to="/about" active-class="is-active">
         <a>
           <span class="icon is-small"><i class="fas fa-info-circle" aria-hidden="true"></i></span>
           <span>Инфо</span>
         </a>
-      </router-link>
+      </router-link> -->
     </ul>
   </div>
 </template>

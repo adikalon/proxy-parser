@@ -84,7 +84,7 @@ app.on('ready', () => {
         event.reply('parser-finish', LogCompiler.parserFinish())
       }
 
-      const page: number   = Marks.getPage(parserName)
+      const page: number = Marks.getPage(parserName)
 
       for (let p = page; p <= maxPage; p++) {
         if (!Parser.isOperate()) {
