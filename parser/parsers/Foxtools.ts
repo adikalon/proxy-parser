@@ -1,4 +1,5 @@
 import Parser from './../common/Parser'
+import { ProxyData } from './../../common/Types'
 
 module.exports = class Foxtools extends Parser {
   public getName (): string {
@@ -9,13 +10,15 @@ module.exports = class Foxtools extends Parser {
     return 'Foxtools - бесплатные прокси'
   }
 
-  public getProxies (page: number): {country: string, type: string, ip: string, port: number, source: string}[] {
-    return [{
-      country: 'temp',
-      type: 'temp',
-      ip: 'temp',
-      port: 0,
-      source: 'temp',
-    }]
+  public getProxies (page: number): Promise<ProxyData[]> {
+    return new Promise((resolve, reject) => {
+      resolve([{
+        country: 'temp',
+        type: 'temp',
+        ip: 'temp',
+        port: 0,
+        source: 'temp',
+      }])
+    })
   }
 }

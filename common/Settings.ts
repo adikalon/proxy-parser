@@ -82,4 +82,28 @@ export default class Settings {
       return row.value
     }
   }
+
+  public static getDelay(): {from: number, to: number} {
+    let delay = {
+      from: 0,
+      to: 0
+    }
+
+    const sql: string = "SELECT `name`, `value` FROM `settings` " +
+      "WHERE `name` = 'delay_from' OR `name` = 'delay_to' LIMIT 2"
+
+    const rows: any[] = this.connect().prepare(sql).get()
+
+    if (rows !== undefined) {
+      for (const row of rows) {
+        if (row.name === 'delay_from') {
+          delay.from = +row.value
+        } else if (row.name === 'delay_to') {
+          delay.to = +row.value
+        }
+      }
+    }
+
+    return delay
+  }
 }

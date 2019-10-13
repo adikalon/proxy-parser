@@ -1,3 +1,4 @@
+import Settings from './../../common/Settings'
 import { ProxyData } from './../../common/Types'
 import path = require('path')
 import fs = require('fs')
@@ -49,8 +50,15 @@ export default abstract class Parser {
     process.exit()
   }
 
+  private delay(): number {
+    const delay: {from: number, to: number} = Settings.getDelay()
+    const rand: number = delay.from + Math.random() * (delay.to + 1 - delay.from)
+
+    return Math.floor(rand)
+  }
+
   abstract getName (): string
   abstract getDescription (): string
 
-  abstract getProxies (page: number): ProxyData[]
+  abstract getProxies (page: number): Promise<ProxyData[]>
 }
