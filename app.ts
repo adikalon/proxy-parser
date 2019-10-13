@@ -6,6 +6,7 @@ import Interaction from './parser/common/Interaction'
 import LogCompiler from './common/LogCompiler'
 import { ProxyData, LogMessage } from './common/Types'
 import AParser from './parser/common/Parser'
+import Logger from './common/Logger'
 
 const config: object[][] = Settings.getAllSettings()
 const proxies: any[] = Proxies.getAllProxy()
@@ -75,7 +76,13 @@ app.on('ready', () => {
 
       let resetPage: boolean = true
 
-      Parser = new CParser()
+      try {
+        Parser = new CParser()
+      } catch (e) {
+        window.webContents.send('parser-log', Logger.log(e))
+        Parser.allowOperate()
+        event.reply('parser-finish', LogCompiler.parserFinish())
+      }
 
       const page: number   = Marks.getPage(parserName)
 
@@ -91,7 +98,15 @@ app.on('ready', () => {
           break
         }
 
-        const proxies: ProxyData[] = await Parser.getProxies(p)
+        let proxies: ProxyData[]
+
+        try {
+          proxies = await Parser.getProxies(p)
+        } catch (e) {
+          window.webContents.send('parser-log', Logger.log(e))
+          resetPage = false
+          break
+        }
 
         if (proxies.length <= 0) {
           break
