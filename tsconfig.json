@@ -9,8 +9,8 @@
     "removeComments": true,
     "noImplicitAny": false,
     "suppressImplicitAnyIndexErrors": true,
-    "typeRoots": [ "node_modules/@types/" ],
-    "types": [ "better-sqlite3"],
+    "typeRoots": ["node_modules/@types/"],
+    "types": ["better-sqlite3", "cheerio"],
     "lib": ["es2015", "es2015.iterable", "dom"]
   },
   "exclude": [

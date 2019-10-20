@@ -22,8 +22,8 @@ if (process.env.NODE_ENV === 'DEV') {
 
 app.on('ready', () => {
   let window: BrowserWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1024,
+    height: 768,
     webPreferences: {
       nodeIntegration: true
     }

@@ -5,6 +5,7 @@ import fs = require('fs')
 
 export default abstract class Parser {
   private operate: boolean = true
+  private pause: {from: number, to: number} = Settings.getDelay()
 
   public allowOperate (): void {
     this.operate = true
@@ -18,15 +19,15 @@ export default abstract class Parser {
     return this.operate
   }
 
-    abstract getName (): string
-    abstract getDescription (): string
+  public delay (): Promise<NodeJS.Timeout> {
+    let rand: number = this.pause.from + Math.random() * (this.pause.to + 1 - this.pause.from)
+    rand = Math.floor(rand)
 
-  public delay(): number {
-    const delay: {from: number, to: number} = Settings.getDelay()
-    const rand: number = delay.from + Math.random() * (delay.to + 1 - delay.from)
-
-    return Math.floor(rand)
+    return new Promise(r => setTimeout(() => r(), rand))
   }
+
+  abstract getName (): string
+  abstract getDescription (): string
 
   abstract getProxies (page: number): Promise<ProxyData[]>
 }
