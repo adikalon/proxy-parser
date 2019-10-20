@@ -3,6 +3,9 @@
     <table class="table is-fullwidth is-striped is-narrow is-hoverable is-bordered">
       <thead>
         <tr>
+          <th colspan="7">Всего {{ this.$root.proxies.length }}</th>
+        </tr>
+        <tr>
           <th>Страна</th>
           <th>Тип</th>
           <th>IP</th>
