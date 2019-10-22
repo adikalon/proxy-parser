@@ -60,4 +60,11 @@ export default class LogCompiler {
       message: 'Парсер остановлен'
     }
   }
+
+  public static notProxiesOnPage(page: number): LogMessage {
+    return {
+      date: new Date().getTime(),
+      message: `Не найдено проксей на странице ${page}`
+    }
+  }
 }

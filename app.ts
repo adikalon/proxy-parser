@@ -98,7 +98,7 @@ app.on('ready', () => {
           break
         }
 
-        let proxies: ProxyData[]
+        let proxies: ProxyData[] | null
 
         try {
           proxies = await Parser.getProxies(p)
@@ -106,6 +106,11 @@ app.on('ready', () => {
           window.webContents.send('parser-log', Logger.log(e))
           resetPage = false
           break
+        }
+
+        if (proxies === null) {
+          window.webContents.send('parser-log', LogCompiler.notProxiesOnPage(p))
+          continue
         }
 
         if (proxies.length <= 0) {

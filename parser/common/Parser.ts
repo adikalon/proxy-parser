@@ -29,5 +29,5 @@ export default abstract class Parser {
   abstract getName (): string
   abstract getDescription (): string
 
-  abstract getProxies (page: number): Promise<ProxyData[]>
+  abstract getProxies (page: number): Promise<ProxyData[] | null>
 }

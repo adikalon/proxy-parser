@@ -3,7 +3,7 @@ import { ProxyData } from './../../common/Types'
 import http = require('http')
 import cheerio = require('cheerio')
 
-module.exports = class Foxtools extends Parser {
+module.exports = class FoxTools extends Parser {
   public getName (): string {
     return 'FoxTools'
   }
@@ -30,7 +30,7 @@ module.exports = class Foxtools extends Parser {
 
   private row: Cheerio
 
-  public getProxies (page: number): Promise<ProxyData[]> {
+  public getProxies (page: number): Promise<ProxyData[] | null> {
     let proxies: ProxyData[] = []
 
     this.options.path = `/Proxy?page=${page}`
@@ -49,6 +49,10 @@ module.exports = class Foxtools extends Parser {
           })
 
           res.on('end', () => {
+            if (!page.trim()) {
+              reject(new Error('Страница не загрузилась'))
+            }
+
             if (page.includes('К сожалению, по вашему запросу прокси-сервера не найдены...')) {
               resolve(proxies)
             }
@@ -92,7 +96,7 @@ module.exports = class Foxtools extends Parser {
   private country (): string {
     const str: string = this.row.find('td').eq(3).text()
     const re: RegExp = /\s(?<val>[а-яё-]+)\s\([^\)]+\)/i
-    const match: RegExpMatchArray = str.match(re)
+    const match: null | RegExpMatchArray = str.match(re)
 
     if (match === null) {
       throw new Error('Не удалось найти страну')
@@ -114,7 +118,7 @@ module.exports = class Foxtools extends Parser {
   private ip (): string {
     const str: string = this.row.find('td').eq(1).text()
     const re: RegExp = /(?<val>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-    const match: RegExpMatchArray = str.match(re)
+    const match: null | RegExpMatchArray = str.match(re)
 
     if (match === null) {
       throw new Error('Не удалось найти ip')
