@@ -34,7 +34,7 @@
             <td></td>
           </tr>
         </table>
-        <div class="types-title">Типы:</div>
+        <div v-if="this.$root.types.length > 0" class="types-title">Типы:</div>
         <label class="checkbox type-block" v-for="(type, key) in this.$root.types" :key="key">
           <input type="checkbox" class="type-field" :value="type" checked>
           {{ type }}
@@ -184,9 +184,11 @@
         this.loadRefreshButton = true
 
         const proxies = ipcRenderer.sendSync('proxies-all')
+        const types   = ipcRenderer.sendSync('types-all')
 
-        if (proxies) {
+        if (proxies && types) {
           this.$root.proxies = proxies
+          this.$root.types   = types
           this.loadRefreshButton = false
         } else {
           this.loadRefreshButton = false
@@ -203,6 +205,7 @@
 
         if (truncate) {
           this.$root.proxies = []
+          this.$root.types   = []
           this.loadTruncateButton = false
         } else {
           this.loadTruncateButton = false
