@@ -168,7 +168,17 @@
       }
     },
     mounted() {
+      this.scrollConsoleToBottom()
+
+      ipcRenderer.on('parser-log', () => {
+        // this.scrollConsoleToBottom()
+        setTimeout(() => this.scrollConsoleToBottom(), 500)
+      })
+
       ipcRenderer.on('parser-finish', (event, message) => {
+        // this.scrollConsoleToBottom()
+        setTimeout(() => this.scrollConsoleToBottom(), 500)
+
         this.$root.loading = false
         this.$root.runned  = false
 
