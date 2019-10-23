@@ -33,8 +33,8 @@ export default class Logger {
     const msec: string  = ('0' + date.getMilliseconds()).slice(-3)
     const fDate: string = `${hour}:${min}:${sec}.${msec}`
 
-    const sA: string = '================================================================================'
-    const sB: string = '--------------------------------------------------------------------------------'
+    const sA: string = '='.repeat(80)
+    const sB: string = '-'.repeat(80)
 
     return `${sA}\r\n${fDate}\r\n${sB}\r\n${err.stack}\r\n${sA}\r\n\r\n`
   }
