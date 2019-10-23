@@ -8,9 +8,6 @@ import { ProxyData, LogMessage } from './common/Types'
 import AParser from './parser/common/Parser'
 import Logger from './common/Logger'
 
-const config: object[][] = Settings.getAllSettings()
-const proxies: any[] = Proxies.getAllProxy()
-
 let Parser: undefined|AParser = undefined
 let url: string
 
@@ -40,8 +37,8 @@ app.on('ready', () => {
   window.on('closed', () => window = null)
 
   window.webContents.on('did-finish-load', () => {
-    window.webContents.send('config-data', config)
-    window.webContents.send('proxies-data', proxies)
+    window.webContents.send('config-data', Settings.getAllSettings())
+    window.webContents.send('proxies-data', Proxies.getAllProxy())
     window.webContents.send('parsers-data', Interaction.list())
     window.webContents.send('proxy-types', Proxies.getTypes())
   })
@@ -52,6 +49,10 @@ app.on('ready', () => {
 
   ipcMain.on('proxies-all', (event: any) => {
     event.returnValue = Proxies.getAllProxy()
+  })
+
+  ipcMain.on('types-all', (event: any) => {
+    event.returnValue = Proxies.getTypes()
   })
 
   ipcMain.on('proxies-truncate', (event: any) => {
@@ -124,6 +125,10 @@ app.on('ready', () => {
           }
 
           const push: boolean | null = Proxies.push(proxy)
+
+          window.webContents.send('proxies-data', Proxies.getAllProxy())
+          window.webContents.send('proxy-types', Proxies.getTypes())
+
           let message: LogMessage
 
           if (push === true) {
