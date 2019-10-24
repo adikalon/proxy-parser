@@ -10,6 +10,7 @@
                   v-for="(parser, key) in this.$root.parsers"
                   :key="key"
                   :value="key"
+                  :selected="(key == currentParser) ? true : false"
                 >{{ parser.name }}</option>
               </select>
             </span>
@@ -93,7 +94,8 @@
     data() {
       return {
         loadClearButton: false,
-        clearOkIcon: false
+        clearOkIcon: false,
+        currentParser: this.$root.parser
       }
     },
     methods: {
@@ -125,6 +127,7 @@
 
       changeParser(event) {
         const key = event.target.value
+        this.$root.parser = key
         this.$root.description = this.$root.parsers[key].description
       },
 

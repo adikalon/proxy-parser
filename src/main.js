@@ -21,7 +21,8 @@ const data = {
   types: [],
   runned: false,
   loading: false,
-  description: ''
+  description: '',
+  parser: 0
 }
 
 getData('config-data', function (value) {
