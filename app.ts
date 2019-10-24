@@ -21,6 +21,7 @@ app.on('ready', () => {
   let window: BrowserWindow = new BrowserWindow({
     width: 1024,
     height: 768,
+    icon: __dirname + '/icon.png',
     webPreferences: {
       nodeIntegration: true
     }
