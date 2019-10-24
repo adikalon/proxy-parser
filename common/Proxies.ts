@@ -31,7 +31,7 @@ export default class Proxies {
       return false
     }
 
-    sql  = 'UPDATE `sqlite_sequence` SET `seq` = 1 WHERE `name` = "proxies"'
+    sql  = 'UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = "proxies"'
     stmt = this.connect().prepare(sql)
     res  = stmt.run()
 
