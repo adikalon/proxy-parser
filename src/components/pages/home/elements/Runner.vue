@@ -181,11 +181,6 @@
       ipcRenderer.on('parser-finish', (event, message) => {
         // this.scrollConsoleToBottom()
         setTimeout(() => this.scrollConsoleToBottom(), 500)
-
-        this.$root.loading = false
-        this.$root.runned  = false
-
-        this.$root.logs.push(message)
       })
     }
   }
