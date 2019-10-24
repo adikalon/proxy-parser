@@ -2,5 +2,6 @@
 /dist/
 /logs/
 *.js
+!vue.config.js
 !/public/**/*.js
 !/src/**/*.js

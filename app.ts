@@ -8,13 +8,13 @@ import { ProxyData, LogMessage } from './common/Types'
 import AParser from './parser/common/Parser'
 import Logger from './common/Logger'
 
-let Parser: undefined|AParser = undefined
+let Parser: undefined | AParser = undefined
 let url: string
 
 if (process.env.NODE_ENV === 'DEV') {
   url = 'http://localhost:8081/'
 } else {
-  url = `file://${process.cwd()}/dist/frontend/index.html`
+  url = `file://${process.cwd()}/dist/index.html`
 }
 
 app.on('ready', () => {

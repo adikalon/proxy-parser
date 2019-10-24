@@ -18,7 +18,9 @@ function removeJS (path: string): void {
         removeJS(name)
       }
     } else if (elem.split('.').pop() === 'js') {
-      fs.unlinkSync(name)
+      if (elem !== 'vue.config.js') {
+        fs.unlinkSync(name)
+      }
     }
   }
 }
