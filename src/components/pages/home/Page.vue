@@ -3,9 +3,7 @@
     <div id="top">
       <app-menu></app-menu>
       <article class="message is-dark">
-        <div class="message-body">
-          {{ this.$root.description }}
-        </div>
+        <div class="message-body" v-html="this.$root.description"></div>
       </article>
     </div>
     <div id="bottom">

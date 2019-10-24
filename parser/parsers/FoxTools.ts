@@ -9,7 +9,8 @@ module.exports = class FoxTools extends Parser {
   }
 
   public getDescription (): string {
-    return 'Foxtools - бесплатные прокси'
+    return 'FoxTools - бесплатные прокси-сервера.<br>' +
+           'Источник: http://foxtools.ru/Proxy'
   }
 
   private options: any = {

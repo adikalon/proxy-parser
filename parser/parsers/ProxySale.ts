@@ -9,7 +9,9 @@ module.exports = class ProxySale extends Parser {
   }
 
   public getDescription (): string {
-    return 'ProxySale - бесплатные прокси'
+    return 'ProxySale - бесплатные прокси-сервера.<br>' +
+           'Источник: https://free.proxy-sale.com<br>' +
+           'Прокси, порты которых указаны как картинка, пропускаются'
   }
 
   private row: Cheerio
