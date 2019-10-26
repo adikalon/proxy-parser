@@ -10,7 +10,7 @@
     "noImplicitAny": false,
     "suppressImplicitAnyIndexErrors": true,
     "typeRoots": ["node_modules/@types/"],
-    "types": ["better-sqlite3", "cheerio"],
+    "types": ["node", "sqlite3", "cheerio", "rimraf"],
     "lib": ["es2015", "es2015.iterable", "dom"]
   },
   "exclude": [

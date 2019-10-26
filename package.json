@@ -12,7 +12,7 @@
     "rebuild-sqlite": "electron-rebuild -f -w better-sqlite3"
   },
   "dependencies": {
-    "better-sqlite3": "5.4.3",
+    "sqlite3": "4.1.0",
     "cheerio": "1.0.0-rc.3",
     "electron": "6.0.8",
     "vue": "2.6.10",
@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@types/cheerio": "0.22.13",
-    "@types/better-sqlite3": "5.4.0",
+    "@types/sqlite3": "3.1.5",
     "@types/node": "^12.7.5",
     "@types/rimraf": "2.0.2",
     "@vue/cli-service": "3.11.0",

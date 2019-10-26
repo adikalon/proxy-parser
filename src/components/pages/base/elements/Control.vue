@@ -58,8 +58,8 @@
         <button
           ref="pullButton"
           class="button is-link"
-          :class="{'is-loading': loadPullButton}"
-          :disabled="this.loadPullButton ? true : false"
+          :class="{'is-loading': this.$root.pull}"
+          :disabled="this.$root.pull ? true : false"
           @click="pull"
         >
           Экспорт
@@ -69,7 +69,7 @@
       <div class="control" title="Обновить список">
         <button
           class="button is-success"
-          :class="{'is-loading': loadRefreshButton}"
+          :class="{'is-loading': this.$root.refresh}"
           ref="refreshButton"
           @click="refresh"
         >
@@ -81,7 +81,7 @@
       <div class="control" title="Очистить базу данных">
         <button
           class="button is-danger"
-          :class="{'is-loading': loadTruncateButton}"
+          :class="{'is-loading': this.$root.truncate}"
           ref="truncateButton"
           @click="openRemoveModal"
         >
@@ -102,10 +102,7 @@
     data() {
       return {
         onHints: false,
-        onModalRemove: false,
-        loadPullButton: false,
-        loadRefreshButton: false,
-        loadTruncateButton: false
+        onModalRemove: false
       }
     },
 
@@ -127,11 +124,11 @@
       },
 
       pull() {
-        if (this.loadPullButton) {
+        if (this.$root.pull) {
           return null
         }
 
-        this.loadPullButton = true
+        this.$root.pull = true
 
         let pattern = this.$refs.pattern.value.trim()
 
@@ -173,45 +170,49 @@
           this.$refs.download.setAttribute('download', 'proxies.txt')
           this.$refs.download.click()
 
-          this.loadPullButton = false
+          this.$root.pull = false
         } else {
-          this.loadPullButton = false
+          this.$root.pull = false
           this.$refs.pullButton.innerText = 'Ошибка'
         }
       },
 
       refresh() {
-        this.loadRefreshButton = true
+        this.$root.refresh = true
 
-        const proxies = ipcRenderer.sendSync('proxies-all')
-        const types   = ipcRenderer.sendSync('types-all')
-
-        if (proxies && types) {
-          this.$root.proxies = proxies
-          this.$root.types   = types
-          this.loadRefreshButton = false
-        } else {
-          this.loadRefreshButton = false
-          this.$refs.refreshButton.innerText = 'Ошибка'
-        }
+        ipcRenderer.send('proxies-and-types-get')
       },
 
       truncateTable() {
         this.closeRemoveModal()
 
-        this.loadTruncateButton = true
+        this.$root.truncate = true
 
-        const truncate = ipcRenderer.sendSync('proxies-truncate')
-
-        if (truncate) {
-          this.$root.proxies = []
-          this.$root.types   = []
-          this.loadTruncateButton = false
+        ipcRenderer.send('proxies-truncate')
+      }
+    },
+    mounted() {
+      ipcRenderer.on('proxies-and-types-data', (event, data) => {
+        if (data.proxies && data.types) {
+          this.$root.proxies = data.proxies
+          this.$root.type    = data.types
+          this.$root.refresh = false
         } else {
-          this.loadTruncateButton = false
+          this.$root.refresh  = false
+          this.$refs.refreshButton.innerText = 'Ошибка'
+        }
+      })
+
+      ipcRenderer.on('proxies-truncate-done', (event, result) => {
+        if (result) {
+          this.$root.proxies  = []
+          this.$root.types    = []
+          this.$root.truncate = false
+        } else {
+          this.$root.truncate = false
           this.$refs.truncateButton.innerText = 'Ошибка'
         }
-      }
+      })
     }
   }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div id="options">
-      <div class="field-body setting-row" v-for="(setting, item) in settings" :key="item">
+      <div class="field-body setting-row" v-for="(setting, item) in this.$root.settings" :key="item">
         <div class="field" v-for="set in setting" :key="set.id">
           <label :title="set.title"><b>{{ set.label }}</b></label>
           <p class="control is-expanded has-icons-left">
@@ -27,7 +27,7 @@
           <a
             class="button is-link"
             ref="saveButton"
-            :class="{'is-loading': loadSaveButton}"
+            :class="{'is-loading': this.$root.save}"
             @click="send"
             :disabled="(this.$root.runned || this.okIcon) ? true : false"
           >
@@ -54,8 +54,6 @@
   export default {
     data() {
       return {
-        settings: this.$root.settings,
-        loadSaveButton: false,
         okIcon: false
       }
     },
@@ -65,37 +63,42 @@
           return null
         }
 
-        this.loadSaveButton = true
+        this.$root.save = true
 
         let fields = {}
 
         for (const input of this.$refs.inputs) {
           fields[input.name] = input.value
 
-          for (const [item, setting] of Object.entries(this.settings)) {
+          for (const [item, setting] of Object.entries(this.$root.settings)) {
             for (const [key, value] of Object.entries(setting)) {
               if (value.name === input.name) {
-                this.settings[item][key].value = input.value
+                this.$root.settings[item][key].value = input.value
               }
             }
           }
         }
 
-        if (ipcRenderer.sendSync('config-save', fields)) {
-          this.loadSaveButton = false
-          this.okIcon         = true
-
-          setTimeout(() => this.okIcon = false, 1000)
-        } else {
-          this.$refs.saveButton.innerText = 'Ошибка'
-          this.loadSaveButton = false
-        }
+        ipcRenderer.send('config-save', fields)
       },
       reset() {
         for (let input of this.$refs.inputs) {
           input.value = input.getAttribute('b-value')
         }
       }
+    },
+    mounted() {
+      ipcRenderer.on('config-save-done', (event, result) => {
+        if (result) {
+          this.$root.save = false
+          this.okIcon     = true
+
+          setTimeout(() => this.okIcon = false, 1000)
+        } else {
+          this.$root.save = false
+          this.$refs.saveButton.innerText = 'Ошибка'
+        }
+      })
     }
   }
 </script>

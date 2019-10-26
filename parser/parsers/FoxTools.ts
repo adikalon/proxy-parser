@@ -31,7 +31,7 @@ module.exports = class FoxTools extends Parser {
 
   private row: Cheerio
 
-  public getProxies (page: number): Promise<ProxyData[] | null> {
+  public async getProxies (page: number): Promise<ProxyData[] | null> {
     let proxies: ProxyData[] = []
 
     this.options.path = `/Proxy?page=${page}`

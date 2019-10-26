@@ -37,121 +37,127 @@ app.on('ready', () => {
 
   window.on('closed', () => window = null)
 
-  window.webContents.on('did-finish-load', () => {
-    window.webContents.send('config-data', Settings.getAllSettings())
-    window.webContents.send('proxies-data', Proxies.getAllProxy())
+  window.webContents.on('did-finish-load', async () => {
+    window.webContents.send('config-data', await Settings.getAllSettings())
+    window.webContents.send('proxies-data', await Proxies.getAllProxy())
     window.webContents.send('parsers-data', Interaction.list())
-    window.webContents.send('proxy-types', Proxies.getTypes())
+    window.webContents.send('proxy-types', await Proxies.getTypes())
   })
 
-  ipcMain.on('config-save', (event: any, fields: any) => {
-    event.returnValue = Settings.updateAllSettings(fields)
+  ipcMain.on('config-save', async (event: any, fields: object) => {
+    await Settings.updateAllSettings(fields)
+    event.reply('config-save-done', true)
   })
 
-  ipcMain.on('proxies-all', (event: any) => {
-    event.returnValue = Proxies.getAllProxy()
+  ipcMain.on('proxies-and-types-get', async (event: any) => {
+    Promise.all([
+      Proxies.getAllProxy(),
+      Proxies.getTypes()
+    ]).then((values: [any[], string[]]) => {
+      event.reply('proxies-and-types-data', {
+        proxies: values[0],
+        types: values[1]
+      })
+    })
   })
 
-  ipcMain.on('types-all', (event: any) => {
-    event.returnValue = Proxies.getTypes()
+  ipcMain.on('proxies-truncate', async (event: any) => {
+    await Proxies.truncateProxiesTable()
+    event.reply('proxies-truncate-done', true)
   })
 
-  ipcMain.on('proxies-truncate', (event: any) => {
-    event.returnValue = Proxies.truncateProxiesTable()
-  })
-
-  ipcMain.on('parser-stop', (event: any) => {
+  ipcMain.on('parser-stop', async (event: any) => {
     if (typeof Parser !== undefined) {
       Parser.denyOperate()
     }
   })
 
-  ipcMain.on('parser-clear', (event: any, name: string) => {
-    event.returnValue = Marks.clearPage(name)
+  ipcMain.on('parser-clear', async (event: any, name: string) => {
+    await Marks.clearPage(name)
+    event.reply('parser-clear-done', true)
   })
 
-  ipcMain.on('parser-start', (event: any, file: string) => {
-    ;(async () => {
-      const CParser: any       = require(`./parser/parsers/${file}`)
-      const maxPage: number    = +Settings.getSpecificOption(Settings.maxPage)
-      const parserName: string = file.replace(/\.js$/, '')
+  ipcMain.on('parser-start', async (event: any, file: string) => {
+    const CParser: any       = require(`./parser/parsers/${file}`)
+    const maxPage: number    = +await Settings.getSpecificOption(Settings.maxPage)
+    const parserName: string = file.replace(/\.js$/, '')
 
-      let resetPage: boolean = true
+    let resetPage: boolean = true
 
-      try {
-        Parser = new CParser()
-      } catch (e) {
-        window.webContents.send('parser-log', Logger.log(e))
-        Parser.allowOperate()
-        event.reply('parser-finish', LogCompiler.parserFinish())
+    try {
+      Parser = new CParser()
+    } catch (e) {
+      window.webContents.send('parser-log', Logger.log(e))
+      Parser.allowOperate()
+      event.reply('parser-finish', LogCompiler.parserFinish())
+    }
+
+    const page: number = await Marks.getPage(parserName)
+
+    for (let p = page; p <= maxPage; p++) {
+      if (!Parser.isOperate()) {
+        resetPage = false
+        break
       }
 
-      const page: number = Marks.getPage(parserName)
+      if (!Marks.setPage(parserName, p)) {
+        resetPage = false
+        window.webContents.send('parser-log', LogCompiler.setPageError(p))
+        break
+      }
 
-      for (let p = page; p <= maxPage; p++) {
+      let proxies: ProxyData[] | null
+
+      try {
+        proxies = await Parser.getProxies(p)
+      } catch (e) {
+        window.webContents.send('parser-log', Logger.log(e))
+        resetPage = false
+        break
+      }
+
+      if (proxies === null) {
+        window.webContents.send('parser-log', LogCompiler.notProxiesOnPage(p))
+        continue
+      }
+
+      if (proxies.length <= 0) {
+        break
+      }
+
+      for (const proxy of proxies) {
         if (!Parser.isOperate()) {
           resetPage = false
           break
         }
 
-        if (!Marks.setPage(parserName, p)) {
-          resetPage = false
-          window.webContents.send('parser-log', LogCompiler.setPageError(p))
-          break
+        const push: boolean = await Proxies.push(proxy)
+
+        window.webContents.send('proxies-data', await Proxies.getAllProxy())
+        window.webContents.send('proxy-types', await Proxies.getTypes())
+
+        let message: LogMessage
+
+        if (push === true) {
+          message = LogCompiler.insertProxy(proxy, p)
+        } else if (push === null) {
+          message = LogCompiler.updateProxy(proxy, p)
+        } else {
+          message = LogCompiler.updateProxy(proxy, p)
+          // message = LogCompiler.errorProxy(proxy, p)
         }
 
-        let proxies: ProxyData[] | null
-
-        try {
-          proxies = await Parser.getProxies(p)
-        } catch (e) {
-          window.webContents.send('parser-log', Logger.log(e))
-          resetPage = false
-          break
-        }
-
-        if (proxies === null) {
-          window.webContents.send('parser-log', LogCompiler.notProxiesOnPage(p))
-          continue
-        }
-
-        if (proxies.length <= 0) {
-          break
-        }
-
-        for (const proxy of proxies) {
-          if (!Parser.isOperate()) {
-            resetPage = false
-            break
-          }
-
-          const push: boolean | null = Proxies.push(proxy)
-
-          window.webContents.send('proxies-data', Proxies.getAllProxy())
-          window.webContents.send('proxy-types', Proxies.getTypes())
-
-          let message: LogMessage
-
-          if (push === true) {
-            message = LogCompiler.insertProxy(proxy, p)
-          } else if (push === null) {
-            message = LogCompiler.updateProxy(proxy, p)
-          } else {
-            message = LogCompiler.errorProxy(proxy, p)
-          }
-
-          window.webContents.send('parser-log', message)
-        }
+        window.webContents.send('parser-log', message)
       }
+    }
 
-      if (resetPage) {
-        if (!Marks.clearPage(parserName)) {
-          window.webContents.send('parser-log', LogCompiler.clearPageError())
-        }
+    if (resetPage) {
+      if (!Marks.clearPage(parserName)) {
+        window.webContents.send('parser-log', LogCompiler.clearPageError())
       }
+    }
 
-      Parser.allowOperate()
-      event.reply('parser-finish', LogCompiler.parserFinish())
-    })()
+    Parser.allowOperate()
+    event.reply('parser-finish', LogCompiler.parserFinish())
   })
 })

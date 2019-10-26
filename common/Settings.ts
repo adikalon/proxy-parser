@@ -1,90 +1,119 @@
 
-import sqlite = require('better-sqlite3')
+import { Database, Statement } from 'sqlite3'
 import path = require('path')
 
 export default class Settings {
   public static proxyLimit: string = 'proxy_limit'
   public static maxPage: string    = 'max_page'
 
-  private static db: sqlite.Database = null
+  private static db: Database | null = null
 
-  private static connect (): sqlite.Database {
+  private static connect (): Database {
     if (this.db === null) {
       const link: string = path.resolve(__dirname, '../databases/settings.db')
-      this.db = new sqlite(link)
+      this.db = new Database(link)
     }
 
     return this.db
   }
 
-  public static getAllSettings (): object[][] {
-    let newSettings: object[][] = []
+  public static getAllSettings (): Promise<object[][]> {
+    let settings: object[][] = []
 
     const sql: string = 'SELECT * FROM `settings`'
 
-    const oldSettings: any[] = this.connect().prepare(sql).all()
-
-    for (const setting of oldSettings) {
-      if (newSettings.length <= 0) {
-        newSettings.push([setting])
-      } else {
-        if (newSettings[newSettings.length - 1].length <= 1) {
-          newSettings[newSettings.length - 1].push(setting)
-        } else {
-          newSettings.push([setting])
+    return new Promise((resolve, reject) => {
+      this.connect().each(sql, (err: Error, row: any) => {
+        if (err) {
+          reject(err)
         }
-      }
-    }
 
-    return newSettings
+        if (settings.length <= 0) {
+          settings.push([row])
+        } else {
+          if (settings[settings.length - 1].length <= 1) {
+            settings[settings.length - 1].push(row)
+          } else {
+            settings.push([row])
+          }
+        }
+      }, (err: Error) => {
+        if (err) {
+          reject(err)
+        }
+
+        resolve(settings)
+      })
+    })
   }
 
-  public static updateAllSettings (fields: object): boolean {
-    let updated: boolean = true
+  public static updateAllSettings (fields: object): Promise<void> {
+    const sql: string = 'UPDATE `settings` SET `value` = ? WHERE `name` = ?'
 
-    for (const [name, value] of Object.entries(fields)) {
-      const sql: string = 'UPDATE `settings` SET `value` = ? WHERE `name` = ?'
-      const stmt: sqlite.Statement<any[]> = this.connect().prepare(sql)
-      const update: sqlite.RunResult = stmt.run(value, name)
+    return new Promise((resolve, reject) => {
+      const stmt: Statement = this.connect().prepare(sql, [], (err: Error) => {
+        if (err) {
+          reject(err)
+        }
+      })
 
-      if (update.changes !== 1) {
-        updated = false
+      for (const [name, value] of Object.entries(fields)) {
+        stmt.run([value, name], (err: Error) => {
+          if (err) {
+            reject(err)
+          }
+        })
       }
-    }
 
-    return updated
+      stmt.finalize()
+      resolve()
+    })
   }
 
-  public static getAll (): {} {
-    let settings = {}
-
+  public static getAll (): Promise<object> {
+    let settings: object = {}
     const sql: string = 'SELECT * FROM `settings`'
-    const rows: any[] = this.connect().prepare(sql).all()
 
-    for (const row of rows) {
-      if (!isNaN(row.value)) {
-        row.value = +row.value
-      }
+    return new Promise((resolve, reject) => {
+      this.connect().all(sql, (err: Error, rows: any[]) => {
+        if (err) {
+          reject(err)
+        }
 
-      settings[row.name] = row.value
-    }
+        rows.forEach(row => {
+          if (!isNaN(row.value)) {
+            row.value = +row.value
+          }
 
-    return settings
+          settings[row.name] = row.value
+        })
+
+        resolve(settings)
+      })
+    })
   }
 
-  public static getSpecificOption (field: string): string {
-    const sql: string = "SELECT `value` FROM `settings` WHERE `name` = ? LIMIT 1"
-    const row: any = this.connect().prepare(sql).get(field)
+  public static getSpecificOption (field: string): Promise<string> {
+    const sql: string = 'SELECT `value` FROM `settings` WHERE `name` = ? LIMIT 1'
+    const stmt: Statement = this.connect().prepare(sql)
 
-    if (row === undefined) {
-      return ''
-    } else {
-      return row.value
-    }
+    return new Promise((resolve, reject) => {
+      stmt.get(field, (err: Error, row: any) => {
+        if (err) {
+          reject(err)
+        }
+
+        if (row === undefined) {
+          resolve('')
+        } else {
+          resolve(row.value)
+        }
+      })
+    })
   }
 
-  public static getDelay(): {from: number, to: number} {
-    let delay = {
+  public static getDelay(): Promise<{from: number, to: number}> {
+    const delay = {
       from: 0,
       to: 0
     }
@@ -92,18 +121,24 @@ export default class Settings {
     const sql: string = "SELECT `name`, `value` FROM `settings` " +
       "WHERE `name` = 'delay_from' OR `name` = 'delay_to' LIMIT 2"
 
-    const rows: any[] = this.connect().prepare(sql).get()
+    return new Promise((resolve, reject) => {
+      this.connect().each(sql, (err: Error, row: any) => {
+        if (err) {
+          reject(err)
+        }
 
-    if (rows !== undefined) {
-      for (const row of rows) {
         if (row.name === 'delay_from') {
           delay.from = +row.value
         } else if (row.name === 'delay_to') {
           delay.to = +row.value
         }
-      }
-    }
+      }, (err: Error) => {
+        if (err) {
+          reject(err)
+        }
 
-    return delay
+        resolve(delay)
+      })
+    })
   }
 }

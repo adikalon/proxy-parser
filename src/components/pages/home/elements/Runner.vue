@@ -21,7 +21,7 @@
           <p class="control" title="Очистить метки">
             <a
               class="button"
-              :class="{'is-loading': loadClearButton}"
+              :class="{'is-loading': this.$root.clear}"
               :disabled="(this.$root.runned || this.clearOkIcon) ? true : false"
               @click="clearMarks"
               ref="clearButton"
@@ -93,7 +93,6 @@
   export default {
     data() {
       return {
-        loadClearButton: false,
         clearOkIcon: false,
         currentParser: this.$root.parser
       }
@@ -136,20 +135,12 @@
           return null
         }
 
-        this.loadClearButton = true
+        this.$root.clear = true
 
         const key   = this.$refs.currentParser.value
         const name  = this.$root.parsers[key].name
 
-        if (ipcRenderer.sendSync('parser-clear', name)) {
-          this.loadClearButton = false
-          this.clearOkIcon = true
-
-          setTimeout(() => this.clearOkIcon = false, 1000)
-        } else {
-          this.loadClearButton = false
-          this.$refs.clearButton.innerText = 'Ошибка'
-        }
+        ipcRenderer.send('parser-clear', name)
       },
 
       runParser() {
@@ -181,6 +172,18 @@
       ipcRenderer.on('parser-finish', (event, message) => {
         // this.scrollConsoleToBottom()
         setTimeout(() => this.scrollConsoleToBottom(), 500)
+      })
+
+      ipcRenderer.on('parser-clear-done', (event, result) => {
+        if (result) {
+          this.$root.clear = false
+          this.clearOkIcon = true
+
+          setTimeout(() => this.clearOkIcon = false, 1000)
+        } else {
+          this.$root.clear = false
+          this.$refs.clearButton.innerText = 'Ошибка'
+        }
       })
     }
   }

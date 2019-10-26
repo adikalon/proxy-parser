@@ -16,7 +16,7 @@ module.exports = class ProxySale extends Parser {
 
   private row: Cheerio
 
-  public getProxies (page: number): Promise<ProxyData[] | null> {
+  public async getProxies (page: number): Promise<ProxyData[] | null> {
     let proxies: ProxyData[] = []
     let skipPage: boolean = false
 

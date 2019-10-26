@@ -1,117 +1,161 @@
 
+import { Database, Statement } from 'sqlite3'
 import { ProxyData } from './Types'
 import Settings from './Settings'
-import sqlite = require('better-sqlite3')
 import path = require('path')
 
 export default class Proxies {
-  private static db: sqlite.Database = null
+  private static db: Database | null = null
 
-  private static connect (): sqlite.Database {
+  private static connect (): Database {
     if (this.db === null) {
       const link: string = path.resolve(__dirname, '../databases/proxies.db')
-      this.db = new sqlite(link)
+      this.db = new Database(link)
     }
 
     return this.db
   }
 
-  public static getAllProxy (): any[] {
+  public static getAllProxy (): Promise<any[]> {
     const sql: string = 'SELECT * FROM `proxies` ORDER BY `updated` DESC'
 
-    return this.connect().prepare(sql).all()
+    return new Promise((resolve, reject) => {
+      this.connect().all(sql, (err: Error, rows: any[]) => {
+        if (err) {
+          reject(err)
+        }
+
+        resolve(rows)
+      })
+    })
   }
 
-  public static truncateProxiesTable (): boolean {
+  public static truncateProxiesTable (): Promise<void> {
     let sql: string = 'DELETE FROM `proxies`'
-    let stmt: sqlite.Statement<any[]> = this.connect().prepare(sql)
-    let res: sqlite.RunResult = stmt.run()
 
-    if (!Number.isInteger(res.changes) || res.changes < 0) {
-      return false
-    }
+    return new Promise((resolve, reject) => {
+      this.connect().run(sql, [], (err: Error) => {
+        if (err) {
+          reject(err)
+        }
+      })
 
-    sql  = 'UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = "proxies"'
-    stmt = this.connect().prepare(sql)
-    res  = stmt.run()
+      sql  = 'UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = "proxies"'
 
-    if (res.changes !== 1) {
-      return false
-    }
+      this.connect().run(sql, [], (err: Error) => {
+        reject(err)
+      })
 
-    return true
+      resolve()
+    })
   }
 
-  public static getTypes (): string[] {
+  public static getTypes (): Promise<string[]> {
     let types: string[] = []
 
     const sql: string = 'SELECT DISTINCT `type` FROM `proxies`'
-    const rows: any[] = this.connect().prepare(sql).all()
 
-    for (const row of rows) {
-      types.push(row.type)
-    }
+    return new Promise((resolve, reject) => {
+      this.connect().each(sql, (err: Error, row: any) => {
+        if (err) {
+          reject(err)
+        }
 
-    return types
+        types.push(row.type)
+      }, (err: Error) => {
+        if (err) {
+          reject(err)
+        }
+
+        resolve(types)
+      })
+    })
   }
 
-  private static removeExtraRows (): boolean {
-    let result: boolean = false
-
-    const allowed: number = +Settings.getSpecificOption(Settings.proxyLimit)
+  private static async removeExtraRows (): Promise<void> {
+    const allowed: number = +await Settings.getSpecificOption(Settings.proxyLimit)
     const sql: string = "SELECT COUNT(*) AS 'count' FROM `proxies`"
-    const count: number = +this.connect().prepare(sql).get().count
 
-    if (count > allowed) {
-      const limit: number = count - allowed
-      const sql: string = 'DELETE FROM `proxies` ORDER BY `id` ASC LIMIT ?'
-      const stmt: sqlite.Statement<any[]> = this.connect().prepare(sql)
-      const exec: sqlite.RunResult = stmt.run(limit)
+    return new Promise((resolve, reject) => {
+      this.connect().get(sql, (err: Error, row: any) => {
+        if (err) {
+          reject(err)
+        }
 
-      if (exec.changes >= 1) {
-        result = true
-      }
-    } else {
-      result = true
-    }
+        if (+row.count > allowed) {
+          const limit: number = +row.count - allowed
+          const sql: string = 'DELETE FROM `proxies` ORDER BY `id` ASC LIMIT ?'
 
-    return result
+          const stmt: Statement = this.connect().prepare(sql, [], (err: Error) => {
+            if (err) {
+              reject(err)
+            }
+          })
+
+          stmt.run(limit)
+          stmt.finalize()
+        }
+
+        resolve()
+      })
+    })
   }
 
-  public static push (data: ProxyData): boolean | null {
-    let result: boolean | null = false
-
+  public static push (data: ProxyData): Promise<boolean> {
     const sql: string = "SELECT `id` FROM `proxies` WHERE `ip` = ? LIMIT 1"
-    const row: any = this.connect().prepare(sql).get(data.ip)
+    const stmt: Statement = this.connect().prepare(sql)
 
-    const date: number = new Date().getTime()
+    return new Promise((resolve, reject) => {
+      stmt.get(data.ip, async (err: Error, row: any) => {
+        if (err) {
+          reject(err)
+        }
 
-    if (row !== undefined) {
-      const sql: string = 'UPDATE `proxies` ' +
-        'SET `country` = ?, `type` = ?, `port` = ?, `source` = ?, `updated` = ? ' +
-        'WHERE `id` = ?'
+        const date: number = new Date().getTime()
 
-      const stmt: sqlite.Statement<any[]> = this.connect().prepare(sql)
-      const exec: sqlite.RunResult = stmt.run(data.country, data.type, data.port, data.source, date, row.id)
+        if (row !== undefined) {
+          const sql: string = 'UPDATE `proxies` ' +
+            'SET `country` = ?, `type` = ?, `port` = ?, `source` = ?, `updated` = ? ' +
+            'WHERE `id` = ?'
 
-      if (exec.changes >= 1) {
-        result = null
-      }
-    } else {
-      const sql: string = "INSERT INTO `proxies` " +
-        "(`country`, `type`, `ip`, `port`, `source`, `inserted`, `updated`) " +
-        "VALUES (?, ?, ?, ?, ?, ?, ?)"
+          const stmt: Statement = this.connect().prepare(sql, [], (err: Error) => {
+            if (err) {
+              reject(err)
+            }
+          })
 
-      const stmt: sqlite.Statement<any[]> = this.connect().prepare(sql)
-      const exec: sqlite.RunResult = stmt.run(data.country, data.type, data.ip, data.port, data.source, date, date)
+          stmt.run([data.country, data.type, data.port, data.source, date, row.id], (err: Error) => {
+            if (err) {
+              reject(err)
+            }
+          })
 
-      if (exec.changes >= 1) {
-        result = true
-      }
-    }
+          stmt.finalize()
 
-    this.removeExtraRows()
+          resolve(false)
+        } else {
+          const sql: string = "INSERT INTO `proxies` " +
+            "(`country`, `type`, `ip`, `port`, `source`, `inserted`, `updated`) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?)"
 
-    return result
+          const stmt: Statement = this.connect().prepare(sql, [], (err: Error) => {
+            if (err) {
+              reject(err)
+            }
+          })
+
+          stmt.run([data.country, data.type, data.ip, data.port, data.source, date, date], (err: Error) => {
+            if (err) {
+              reject(err)
+            }
+          })
+
+          stmt.finalize()
+          await this.removeExtraRows()
+
+          resolve(true)
+        }
+      })
+    })
   }
 }

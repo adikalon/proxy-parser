@@ -21,6 +21,11 @@ const data = {
   types: [],
   runned: false,
   loading: false,
+  refresh: false,
+  truncate: false,
+  pull: false,
+  save: false,
+  clear: false,
   description: '',
   parser: 0
 }
