@@ -27,19 +27,6 @@ export default class LogCompiler {
     }
   }
 
-  public static errorProxy(data: ProxyData, page: number): LogMessage {
-    let message: string = ''
-
-    message += `Событие: ОШИБКА записи в БД<br>`
-    message += `Прокси: ${data.ip}<br>`
-    message += `Страница: ${page}`
-
-    return {
-      date: new Date().getTime(),
-      message: ''
-    }
-  }
-
   public static setPageError(page: number): LogMessage {
     return {
       date: new Date().getTime(),

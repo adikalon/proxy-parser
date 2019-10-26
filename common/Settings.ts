@@ -65,8 +65,13 @@ export default class Settings {
         })
       }
 
-      stmt.finalize()
-      resolve()
+      stmt.finalize((err: Error) => {
+        if (err) {
+          reject(err)
+        }
+
+        resolve()
+      })
     })
   }
 
@@ -95,9 +100,14 @@ export default class Settings {
 
   public static getSpecificOption (field: string): Promise<string> {
     const sql: string = 'SELECT `value` FROM `settings` WHERE `name` = ? LIMIT 1'
-    const stmt: Statement = this.connect().prepare(sql)
 
     return new Promise((resolve, reject) => {
+      const stmt: Statement = this.connect().prepare(sql, [], (err: Error) => {
+        if (err) {
+          reject(err)
+        }
+      })
+
       stmt.get(field, (err: Error, row: any) => {
         if (err) {
           reject(err)

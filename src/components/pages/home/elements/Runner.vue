@@ -26,7 +26,8 @@
               @click="clearMarks"
               ref="clearButton"
             >
-              <span class="icon is-small">
+              <span v-if="clearButtonError">sdfsdf</span>
+              <span v-if="!clearButtonError" class="icon is-small">
                 <i class="fa" :class="{'fa-check': clearOkIcon, 'fa-trash-alt': !clearOkIcon}" aria-hidden="true"></i>
               </span>
             </a>
@@ -94,7 +95,8 @@
     data() {
       return {
         clearOkIcon: false,
-        currentParser: this.$root.parser
+        currentParser: this.$root.parser,
+        clearButtonError: false
       }
     },
     methods: {
@@ -181,8 +183,8 @@
 
           setTimeout(() => this.clearOkIcon = false, 1000)
         } else {
-          this.$root.clear = false
-          this.$refs.clearButton.innerText = 'Ошибка'
+          this.$root.clear      = false
+          this.clearButtonError = true
         }
       })
     }

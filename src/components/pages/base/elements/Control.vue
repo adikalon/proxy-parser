@@ -73,9 +73,7 @@
           ref="refreshButton"
           @click="refresh"
         >
-          <span class="icon is-small">
-            <i class="fa fa-sync" aria-hidden="true"></i>
-          </span>
+          <span class="icon is-small" v-html="refreshButtonText"></span>
         </button>
       </div>
       <div class="control" title="Очистить базу данных">
@@ -85,9 +83,7 @@
           ref="truncateButton"
           @click="openRemoveModal"
         >
-          <span class="icon is-small">
-            <i class="fa fa-trash-alt" aria-hidden="true"></i>
-          </span>
+          <span class="icon is-small" v-html="truncateButtonText"></span>
         </button>
       </div>
     </div>
@@ -102,7 +98,9 @@
     data() {
       return {
         onHints: false,
-        onModalRemove: false
+        onModalRemove: false,
+        refreshButtonText: '<i class="fa fa-sync" aria-hidden="true"></i>',
+        truncateButtonText: '<i class="fa fa-trash-alt" aria-hidden="true"></i>'
       }
     },
 
@@ -199,7 +197,7 @@
           this.$root.refresh = false
         } else {
           this.$root.refresh  = false
-          this.$refs.refreshButton.innerText = 'Ошибка'
+          this.refreshButtonText = 'Ошибка'
         }
       })
 
@@ -210,7 +208,7 @@
           this.$root.truncate = false
         } else {
           this.$root.truncate = false
-          this.$refs.truncateButton.innerText = 'Ошибка'
+          this.truncateButtonText = 'Ошибка'
         }
       })
     }

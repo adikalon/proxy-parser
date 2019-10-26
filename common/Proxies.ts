@@ -43,10 +43,12 @@ export default class Proxies {
       sql  = 'UPDATE `sqlite_sequence` SET `seq` = 0 WHERE `name` = "proxies"'
 
       this.connect().run(sql, [], (err: Error) => {
-        reject(err)
-      })
+        if (err) {
+          reject(err)
+        }
 
-      resolve()
+        resolve()
+      })
     })
   }
 
@@ -93,19 +95,30 @@ export default class Proxies {
           })
 
           stmt.run(limit)
-          stmt.finalize()
-        }
+          stmt.finalize((err: Error) => {
+            if (err) {
+              reject(err)
+            }
 
-        resolve()
+            resolve()
+          })
+        } else {
+          resolve()
+        }
       })
     })
   }
 
   public static push (data: ProxyData): Promise<boolean> {
     const sql: string = "SELECT `id` FROM `proxies` WHERE `ip` = ? LIMIT 1"
-    const stmt: Statement = this.connect().prepare(sql)
 
     return new Promise((resolve, reject) => {
+      const stmt: Statement = this.connect().prepare(sql, [], (err: Error) => {
+        if (err) {
+          reject(err)
+        }
+      })
+
       stmt.get(data.ip, async (err: Error, row: any) => {
         if (err) {
           reject(err)

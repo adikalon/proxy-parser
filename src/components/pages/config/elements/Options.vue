@@ -34,7 +34,7 @@
             <span class="icon is-small" v-if="okIcon">
               <i class="fas fa-check"></i>
             </span>
-            <span>Сохранить</span>
+            <span>{{ saveButtonText }}</span>
           </a>
         </p>
         <p class="control" title="Восстановить сохраненные настройки">
@@ -54,7 +54,8 @@
   export default {
     data() {
       return {
-        okIcon: false
+        okIcon: false,
+        saveButtonText: 'Сохранить'
       }
     },
     methods: {
@@ -95,8 +96,8 @@
 
           setTimeout(() => this.okIcon = false, 1000)
         } else {
-          this.$root.save = false
-          this.$refs.saveButton.innerText = 'Ошибка'
+          this.$root.save     = false
+          this.saveButtonText = 'Ошибка'
         }
       })
     }
