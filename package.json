@@ -1,5 +1,6 @@
 {
   "name": "proxy-parser",
+  "description": "Парсер прокс-серверов на Electron JS",
   "version": "1.0.0",
   "author": "adikalon",
   "license": "ISC",
