@@ -8,5 +8,7 @@ npm i
 ```
 -------
 ## Запуск:
+```sh
 run.sh - для linux
 run.exe - для windows
+```
