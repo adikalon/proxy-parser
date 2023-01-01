@@ -24,7 +24,7 @@
     "@types/sqlite3": "3.1.5",
     "@types/node": "^12.7.5",
     "@types/rimraf": "2.0.2",
-    "@vue/cli-service": "3.11.0",
+    "@vue/cli-service": "5.0.8",
     "electron-builder": "21.2.0",
     "rimraf": "3.0.0",
     "typescript": "3.6.3",
